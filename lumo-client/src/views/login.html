@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="../styles/login.css" />
+    </head>
+    <body>
+        <div id="singup"></div>
+        <script type="module" src="/src/login.js"></script>
+        <main id="main">
+            <div id="login-box">
+                <h1>Login</h1>
+                <form>
+                    <label>Email</label><br />
+                    <input type="email" placeholder="insert your email" /><br />
+                    <label>Password</label><br />
+                    <input
+                        type="password"
+                        placeholder="Insert your password"
+                    /><br />
+                    <input type="checkbox" id="rememberMe" /><label
+                        for="rememberMe"
+                        >Remember me</label
+                    ><br />
+                    <input type="submit" value="Log in" /><br />
+                    <label>Forgot password?</label
+                    ><a href="forgot-password.html">Recover Password</a>
+                    <hr />
+                    <label>Don't have an account?</label
+                    ><a href="register.html">Register</a>
+                </form>
+            </div>
+        </main>
+    </body>
+</html>
