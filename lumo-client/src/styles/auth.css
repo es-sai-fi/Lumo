@@ -1,0 +1,65 @@
+h1 {
+    font-family: "Montserrat", sans-serif;
+    text-align: center;
+}
+
+body {
+    background-color: blanchedalmond;
+}
+
+form button[type="submit"] {
+    display: block;
+    width: 100%;
+    padding: 0.7rem;
+    background-color: darkkhaki;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.box {
+    font-family: "Roboto", sans-serif;
+    width: 18rem;
+    height: auto;
+    margin: auto;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 60px rgb(0 0 0 / 0.5);
+    background-color: #fff;
+}
+
+.row {
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.row label {
+    display: block;
+    text-align: left;
+    margin-bottom: 0.3rem;
+}
+
+.row input[type="text"],
+.row input[type="email"],
+.row input[type="password"] {
+    width: 100%;
+    padding: 0.5rem;
+    box-sizing: border-box;
+}
+.row input[type="checkbox"] + label {
+    display: inline-block;
+}
+
+.box #previous {
+    display: block;
+    margin-bottom: 1rem;
+    align-items: left;
+}

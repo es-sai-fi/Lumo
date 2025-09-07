@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" type="image/png" href="/lumo-logo.png" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="../styles/auth.css" />
+        <title>Register</title>
+    </head>
+    <body>
+        <script type="module" src="/src/register.js"></script>
+        <main id="main">
+            <div class="box">
+                <a href="/login" id="previous">
+                    <img src="/previous.png" alt="Previous Page" />
+                </a>
+
+                <a href="/home">
+                    <img src="/lumo-logo.png" alt="Lumo Logo" class="logo" />
+                </a>
+
+                <h1>Register</h1>
+
+                <form method="post">
+                    <div class="row">
+                        <label for="Name"> Name: </label>
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            placeholder="Example: John"
+                            required
+                        />
+                    </div>
+
+                    <div class="row">
+                        <label for="Last Name"> Last Name: </label>
+                        <input
+                            type="text"
+                            id="lastName"
+                            name="lastName"
+                            placeholder="Example: Doe"
+                            required
+                        />
+                    </div>
+
+                    <div class="row">
+                        <label for="email"> Email: </label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="Example: user@example.com"
+                            required
+                        />
+                    </div>
+
+                    <div class="row">
+                        <label for="password"> Password: </label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Enter a password"
+                            required
+                        />
+                    </div>
+
+                    <div class="row">
+                        <label for="confirmPassword"> Confirm Password: </label>
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            name="confirmPassword"
+                            placeholder="Enter once again the password"
+                            required
+                        />
+                    </div>
+
+                    <button type="submit">Enter</button>
+                </form>
+            </div>
+        </main>
+    </body>
+</html>

@@ -2,35 +2,60 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+        <link rel="icon" type="image/png" href="/lumo-logo.png" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="../styles/login.css" />
+        <link rel="stylesheet" href="../styles/auth.css" />
+        <title>Login</title>
     </head>
     <body>
-        <div id="singup"></div>
         <script type="module" src="/src/login.js"></script>
         <main id="main">
-            <div id="login-box">
-                <h1>Login</h1>
-                <form>
-                    <label>Email</label><br />
-                    <input type="email" placeholder="insert your email" /><br />
-                    <label>Password</label><br />
-                    <input
-                        type="password"
-                        placeholder="Insert your password"
-                    /><br />
-                    <input type="checkbox" id="rememberMe" /><label
-                        for="rememberMe"
-                        >Remember me</label
-                    ><br />
-                    <input type="submit" value="Log in" /><br />
-                    <label>Forgot password?</label
-                    ><a href="forgot-password.html">Recover Password</a>
-                    <hr />
-                    <label>Don't have an account?</label
-                    ><a href="register.html">Register</a>
+            <div class="box">
+                <a href="/home">
+                    <img src="/lumo-logo.png" alt="Lumo Logo" class="logo" />
+                </a>
+
+                <h1>Log in</h1>
+
+                <form method="post">
+                    <div class="row">
+                        <label for="email"> Email: </label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="Example: user@example.com"
+                            required
+                        />
+                    </div>
+
+                    <div class="row">
+                        <label for="password"> Password: </label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Enter your password"
+                            required
+                        />
+                    </div>
+
+                    <div class="row">
+                        <input type="checkbox" id="rememberMe" value="true" />
+                        <label for="rememberMe">Remember me</label>
+                    </div>
+
+                    <button type="submit">Enter</button>
                 </form>
+                <p>
+                    Forgot password?
+                    <a href="/recover-password"> Recorver password </a>
+                </p>
+                <hr />
+                <p>
+                    Not registered?
+                    <a href="/sing-up"> Create an account </a>
+                </p>
             </div>
         </main>
     </body>
