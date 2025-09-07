@@ -1,0 +1,126 @@
+/*Menu bar*/
+#menu {
+    background-color:rgb(252, 250, 246);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 auto;
+    padding: 0px 3rem;
+
+    box-sizing: border-box;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.logo {
+    font-size: 2rem;
+    color: orange;
+    font-weight: bold;
+}
+#menu ul {
+    font-size: 1.2rem;
+    list-style-type: none;
+    display: flex;
+    gap: 1rem;
+}
+#menu li a{
+    text-decoration: none;
+    color: inherit;
+    margin-left: 2rem;
+}
+.login-btn a{
+    text-decoration: none;
+    border-radius: 2px;
+    color: white;
+    background-color: orange;
+    padding: 10px 2rem;
+}
+
+/*Page informatión */
+body {
+    margin: 0;
+    background-color: rgba(226, 233, 233, 0.521);
+}
+#principal {
+    justify-content: space-between;
+}
+.content{
+    display: flex;
+    align-items: center;
+ 
+    box-sizing: border-box;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+h1 {
+    line-height: 1.4;
+    margin-top: 2rem;
+    margin-left: 5rem;
+    font-size: 3rem;
+    background: linear-gradient(45deg, orange, red);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}   
+#principal img{
+    margin-top: 2rem;
+    height: auto;
+    display: flex;
+    margin-left: 8rem;
+
+}
+#principal a {
+    text-decoration: none;
+    font-size: 20px;
+
+    margin-left: 18rem;
+    padding: 5px 3rem;
+    color: white;
+    background-color: orange;
+    border-radius: 4px;
+}
+#principal .text-center{
+    margin: 0rem;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    font-size: 1.8rem;
+}
+/* Footer */
+footer {
+    background-color: #152138;
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+    padding: 1rem 4rem;
+  
+}
+footer .logo {
+    margin-top: 1rem;
+}
+footer .medium-foot p,
+footer .right-foot p{
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+footer .left-foot,
+footer .medium-foot,
+footer .right-foot {
+   
+    color: whitesmoke;
+    margin-top: 2rem;
+   
+}
+.medium-foot ul,
+.right-foot ul {
+    list-style: none;
+    line-height: 1.5rem;
+    padding: 0;
+    margin: 0;
+}
+.medium-foot a,
+.right-foot a {
+    line-height: 1rem;
+    text-decoration: none;
+    color: white;
+    
+}
+
+/* Media Queryresponsive */
