@@ -47,6 +47,7 @@ form button[type="submit"] {
     margin-bottom: 0.3rem;
 }
 
+.row input[type="number"],
 .row input[type="text"],
 .row input[type="email"],
 .row input[type="password"] {
@@ -62,4 +63,10 @@ form button[type="submit"] {
     display: block;
     margin-bottom: 1rem;
     align-items: left;
+}
+
+.feedback {
+    font-size: 0.8rem;
+    margin-top: 0.3rem;
+    color: red;
 }
