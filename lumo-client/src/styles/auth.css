@@ -27,7 +27,8 @@ form button[type="submit"] {
 
 .box {
     font-family: "Roboto", sans-serif;
-    width: 18rem;
+    width: 100%;
+    max-width: 18rem;
     height: auto;
     margin: auto;
     padding: 2rem;
