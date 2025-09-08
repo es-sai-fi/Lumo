@@ -36,20 +36,20 @@ class UserController extends GlobalController {
       !password ||
       !confirmPassword
     ) {
-      return res
-        .status(400)
-        .json({ message: "Todos los campos son obligatorios." });
+      return res.status(400).json({ message: "All fields are required" });
     }
     if (password !== confirmPassword) {
-      return res.status(400).json({ message: "Las contraseñas no coinciden." });
+      return res.status(400).json({ message: "Passwords don't match" });
     }
     try {
+      const hashedPassword = await bcrypt.hash(password, 10);
+
       const user = await this.dao.create({
         firstName,
         lastName,
         age,
         email,
-        password,
+        password: hashedPassword,
       });
       res.status(201).json(user);
     } catch (error) {
@@ -63,7 +63,7 @@ class UserController extends GlobalController {
     if (!email || !password) {
       return res
         .status(400)
-        .json({ message: "Email y contraseña son requeridos." });
+        .json({ message: "Email and password are required" });
     }
 
     try {
@@ -83,13 +83,11 @@ class UserController extends GlobalController {
           .json({ message: "Email or password are incorrect" });
       }
 
-      // Genera token JWT
       const payload = { id: user._id, email: user.email };
       const token = jwt.sign(payload, process.env.JWT_SECRET, {
-        expiresIn: "1h", // duración del token
+        expiresIn: "1h",
       });
 
-      // Retorna el token
       res.json({ token });
     } catch (error) {
       res.status(500).json({ message: error.message });
