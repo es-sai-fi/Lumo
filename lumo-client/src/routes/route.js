@@ -27,6 +27,7 @@ const viewStyleMap = {
   home: "home",
   board: "board",
   dashboard: "dashboard",
+  all: "dashboard"
 };
 
 /**
@@ -88,7 +89,7 @@ export function initRouter() {
 function handleRoute() {
   const path =
     (location.hash.startsWith("#/") ? location.hash.slice(2) : "") || "home";
-  const known = ["home", "login", "register", "password-recovery", "dashboard"];
+  const known = ["home", "login", "register", "password-recovery", "dashboard", "all"];
   const route = known.includes(path) ? path : "home";
 
   loadView(route).catch((err) => {
