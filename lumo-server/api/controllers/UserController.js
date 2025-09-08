@@ -12,15 +12,8 @@ class UserController extends GlobalController {
   }
 
   async create(req, res) {
-    let {
-      firstName,
-      lastName,
-      age,
-      email,
-      username,
-      password,
-      confirmPassword,
-    } = req.body;
+    let { firstName, lastName, age, email, password, confirmPassword } =
+      req.body;
 
     // Convierte age a número
     age = Number(age);
@@ -43,6 +36,14 @@ class UserController extends GlobalController {
     }
     try {
       const hashedPassword = await bcrypt.hash(password, 10);
+
+      const existingUser = await this.dao.model.findOne({ email });
+      if (existingUser) {
+        console.log(
+          `Registration rejected 409 Conflict: email already registered (${email})`,
+        );
+        return res.status(409).json({ message: "Email already registered" });
+      }
 
       const user = await this.dao.create({
         firstName,

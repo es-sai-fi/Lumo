@@ -152,7 +152,45 @@ function initRegister() {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     msg.textContent = "";
-    msg.style.color = "red"; // por defecto rojo (errores)
+
+    // Retrieves the data from the form.
+    const data = {
+      firstName: form.firstName.value.trim(),
+      lastName: form.lastName.value.trim(),
+      age: form.age.value.trim(),
+      email: form.email.value.trim(),
+      password: form.password.value.trim(),
+      confirmPassword: form.confirmPassword.value.trim(),
+    };
+
+    // Field completion validation.
+    if (Object.values(data).some((v) => !v)) {
+      msg.textContent = "Please fill out all the fields.";
+      return;
+    }
+
+    // Age validation.
+    const ageNum = Number(data.age);
+    if (isNaN(ageNum) || ageNum < 13) {
+      msg.textContent = "Age must be greater or equal to 13.";
+      return;
+    }
+
+    // Password validation.
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+    if (!passwordRegex.test(data.password)) {
+      msg.textContent =
+        "The password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.";
+      return;
+    }
+
+    // Confirm password validation.
+    if (data.password !== data.confirmPassword) {
+      msg.textContent = "Passwords do not match.";
+      return;
+    }
+
+    form.querySelector('button[type="submit"]').disabled = true;
 
     try {
       // Retrieves the data from the form.
