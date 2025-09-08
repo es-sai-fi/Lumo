@@ -1,0 +1,10 @@
+.container {
+    background-color: grey;
+}
+
+.box {
+    background-color: white;
+    border-radius: 1rem;
+    width: 80%;
+    max-width: 36rem;
+}
