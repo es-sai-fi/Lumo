@@ -27,7 +27,10 @@ const viewStyleMap = {
   home: "home",
   board: "board",
   dashboard: "dashboard",
-  all: "dashboard"
+  ongoing: "dashboard",
+  unassigned: "dashboard",
+  completed: "dashboard",
+  
 };
 
 /**
@@ -89,7 +92,7 @@ export function initRouter() {
 function handleRoute() {
   const path =
     (location.hash.startsWith("#/") ? location.hash.slice(2) : "") || "home";
-  const known = ["home", "login", "register", "password-recovery", "dashboard", "all"];
+  const known = ["home", "login", "register", "password-recovery", "dashboard", "ongoing", "unassigned", "completed", "board"];
   const route = known.includes(path) ? path : "home";
 
   loadView(route).catch((err) => {
