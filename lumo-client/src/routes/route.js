@@ -191,14 +191,17 @@ function initRegister() {
 
     try {
       await registerUser(data);
+      const spinner = document.getElementById("spinner");
+      spinner.style.display = "block";
       msg.textContent = "Succesfully registered";
       msg.style.color = "green";
       form.reset();
-      setTimeout(() => (location.hash = "#/login"), 400);
+      setTimeout(() => {
+        spinner.style.display = "none";
+        location.hash = "#/login";
+      }, 1000);
     } catch (err) {
       msg.textContent = `Couldn't register: ${err.message}`;
-    } finally {
-      form.querySelector('button[type="submit"]').disabled = false;
     }
   });
 }
@@ -233,6 +236,8 @@ function initLogin() {
       setTimeout(() => (location.hash = "#/board"), 400);
     } catch (err) {
       msg.textContent = `Couldn't log in: ${err.message}`;
+      msg.style.color = "red";
+      msg.hidden = false;
     } finally {
       form.querySelector('button[type="submit"]').disabled = false;
     }
