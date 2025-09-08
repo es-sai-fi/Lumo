@@ -1,10 +1,57 @@
-.container {
-    background-color: grey;
+/* contenedor principal */
+#container {
+    position: relative;
+    background-color: whitesmoke;
+    min-height: 100vh;
+    padding: 3rem 1rem 1rem;
+    display: flex;
+    flex-direction: column; /* vertical */
+    justify-content: center; /* centra verticalmente */
+    align-items: center; /* centra horizontalmente */
+    gap: 2rem;
 }
 
+/* previous arriba izquierda */
+#previous {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+}
+
+#previous img {
+    width: 2rem;
+    height: auto;
+}
+
+/* cajas internas */
 .box {
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     background-color: white;
     border-radius: 1rem;
     width: 80%;
     max-width: 36rem;
+    font-family: "Roboto", sans-serif;
+}
+
+/* separaciones y tipografía dentro de las boxes */
+.box h2 {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.box span {
+    font-weight: normal;
+    color: #333;
+}
+
+/* responsive */
+@media (max-width: 768px) {
+    #container {
+        padding: 2rem 1rem 1rem;
+    }
+    .box {
+        width: 95%;
+    }
 }

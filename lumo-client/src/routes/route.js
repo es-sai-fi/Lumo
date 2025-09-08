@@ -1,4 +1,8 @@
-import { registerUser, loginUser } from "../services/userService.js";
+import {
+  registerUser,
+  loginUser,
+  getUserProfileInfo,
+} from "../services/userService.js";
 
 const app = document.getElementById("app");
 
@@ -26,6 +30,9 @@ const viewStyleMap = {
   "password-recovery": "auth",
   home: "home",
   board: "board",
+  profile: "profile",
+  dashboard: "dashboard",
+  all: "dashboard",
 };
 
 /**
@@ -52,6 +59,7 @@ async function loadView(name) {
   if (name === "register") initRegister();
   if (name === "login") initLogin();
   if (name === "board") initBoard();
+  // if (name === "profile") initProfile();
 }
 
 /**
@@ -87,7 +95,15 @@ export function initRouter() {
 function handleRoute() {
   const path =
     (location.hash.startsWith("#/") ? location.hash.slice(2) : "") || "home";
-  const known = ["home", "login", "register", "password-recovery", "dashboard"];
+  const known = [
+    "home",
+    "login",
+    "register",
+    "password-recovery",
+    "dashboard",
+    "profile",
+    "all",
+  ];
   const route = known.includes(path) ? path : "home";
 
   loadView(route).catch((err) => {
@@ -97,6 +113,31 @@ function handleRoute() {
 }
 
 /* ---- View-specific logic ---- */
+
+/**
+ * Initialize the "profile" view.
+ * Receives the user information from the server and shows it.
+ */
+async function initProfile() {
+  const fullNameSpan = document.getElementById("userFullName");
+  const userCreatedAtSpan = document.getElementById("userCreatedAt");
+  const userEmailSpan = document.getElementById("userEmail");
+
+  try {
+    const userData = await getUserProfileInfo();
+
+    fullNameSpan.textContent = `${userData.firstName} ${userData.lastName}`;
+    userCreatedAtSpan.textContent = new Date(
+      userData.createdAt,
+    ).toLocaleDateString();
+    userEmailSpan.textContent = userData.email;
+  } catch (err) {
+    console.error("Couldn't fetch user profile:", err);
+    fullNameSpan.textContent = "Error loading profile";
+    userCreatedAtSpan.textContent = "-";
+    userEmailSpan.textContent = "-";
+  }
+}
 
 /**
  * Initialize the "register" view.
@@ -153,10 +194,15 @@ function initRegister() {
 
     try {
       await registerUser(data);
-      msg.textContent = "Successfully registered";
+      const spinner = document.getElementById("spinner");
+      spinner.style.display = "block";
+      msg.textContent = "Succesfully registered";
       msg.style.color = "green";
       form.reset();
-      setTimeout(() => (location.hash = "#/login"), 400);
+      setTimeout(() => {
+        spinner.style.display = "none";
+        location.hash = "#/login";
+      }, 1000);
     } catch (err) {
       // Show only the backend message if it's a known conflict
       if (err.message === "Este correo ya está registrado") {
@@ -165,45 +211,53 @@ function initRegister() {
         msg.textContent = `Couldn't register: ${err.message}`;
       }
       msg.style.color = "red";
-    } finally {
-      form.querySelector('button[type="submit"]').disabled = false;
     }
   });
 }
 
-/**
- * Initialize the "login" view.
- * Attaches a submit handler to the login form to navigate to the board.
- */
 function initLogin() {
   const form = document.getElementById("loginForm");
   const msg = document.getElementById("loginMsg");
 
   if (!form) return;
 
-  form.addEventListener("submit", async (e) => {
+  // Función que maneja el login y guarda el token
+  async function handleLogin(data) {
+    try {
+      const response = await loginUser(data); // loginUser viene de userService.js
+      const token = response.token; // asumimos que el backend devuelve { token }
+
+      // Guardar token en localStorage
+      localStorage.setItem("token", token);
+
+      msg.textContent = "Successfully logged in";
+      msg.style.color = "green";
+      form.reset();
+
+      // Redirigir a board
+      setTimeout(() => {
+        location.hash = "#/board";
+      }, 400);
+    } catch (err) {
+      msg.textContent = `Couldn't log in: ${err.message}`;
+      msg.style.color = "red";
+      msg.hidden = false;
+    } finally {
+      form.querySelector('button[type="submit"]').disabled = false;
+    }
+  }
+
+  form.addEventListener("submit", (e) => {
     e.preventDefault();
     msg.textContent = "";
 
-    // Retrieves the data from all the form.
     const data = {
       email: form.email.value.trim(),
       password: form.password.value.trim(),
     };
 
     form.querySelector('button[type="submit"]').disabled = true;
-
-    try {
-      await loginUser(data);
-      msg.textContent = "Succesfully logged in";
-      msg.style.color = "green";
-      form.reset();
-      setTimeout(() => (location.hash = "#/board"), 400);
-    } catch (err) {
-      msg.textContent = `Couldn't log in: ${err.message}`;
-    } finally {
-      form.querySelector('button[type="submit"]').disabled = false;
-    }
+    handleLogin(data);
   });
 }
 
