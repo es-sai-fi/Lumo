@@ -10,13 +10,12 @@ class UserController extends GlobalController {
   }
 
   async create(req, res) {
-    console.log("BODY RECIBIDO:", req.body);
+  // Log only when email is already registered
     let {
       firstName,
       lastName,
       age,
       email,
-      username,
       password,
       confirmPassword,
     } = req.body;
@@ -43,6 +42,12 @@ class UserController extends GlobalController {
       return res.status(400).json({ message: "Las contraseñas no coinciden." });
     }
     try {
+      // Validar si el email ya existe
+      const existingUser = await this.dao.model.findOne({ email });
+      if (existingUser) {
+        console.log(`Registration rejected 409 Conflict: email already registered (${email})`);
+        return res.status(409).json({ message: "Este correo ya está registrado" });
+      }
       const user = await this.dao.create({
         firstName,
         lastName,

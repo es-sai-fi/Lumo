@@ -145,7 +145,7 @@ function initRegister() {
 
     // Confirm password validation.
     if (data.password !== data.confirmPassword) {
-      msg.textContent = "Las contraseñas no coinciden.";
+      msg.textContent = "Passwords do not match.";
       return;
     }
 
@@ -153,12 +153,18 @@ function initRegister() {
 
     try {
       await registerUser(data);
-      msg.textContent = "Succesfully registered";
+      msg.textContent = "Successfully registered";
       msg.style.color = "green";
       form.reset();
       setTimeout(() => (location.hash = "#/login"), 400);
     } catch (err) {
-      msg.textContent = `Couldn't register: ${err.message}`;
+      // Show only the backend message if it's a known conflict
+      if (err.message === "Este correo ya está registrado") {
+        msg.textContent = "This email is already registered.";
+      } else {
+        msg.textContent = `Couldn't register: ${err.message}`;
+      }
+      msg.style.color = "red";
     } finally {
       form.querySelector('button[type="submit"]').disabled = false;
     }
