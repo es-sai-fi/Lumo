@@ -36,3 +36,10 @@ export async function registerUser({
     confirmPassword,
   });
 }
+
+export async function loginUser({ email, password }) {
+  return http.post("no sé lmao", {
+    email,
+    password,
+  });
+}

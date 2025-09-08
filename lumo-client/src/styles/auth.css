@@ -26,6 +26,7 @@ form button[type="submit"] {
 }
 
 .box {
+    position: relative;
     font-family: "Roboto", sans-serif;
     width: 100%;
     max-width: 18rem;
@@ -64,4 +65,45 @@ form button[type="submit"] {
     display: block;
     margin-bottom: 1rem;
     align-items: left;
+}
+
+.logo {
+    display: block;
+    margin: 0 auto;
+    max-width: 150px;
+    height: auto;
+}
+
+.step {
+    display: none;
+}
+
+.step.active {
+    display: block;
+}
+
+#previous {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    display: inline-block;
+}
+
+#previous img {
+    width: 2rem;
+    height: auto;
+}
+
+#registerMsg {
+    color: red;
+    min-height: 1.25rem;
+    margin: 0.25rem 0 0;
+    text-align: center;
+}
+
+#loginMsg {
+    color: red;
+    min-height: 1.25rem;
+    margin: 0.25rem 0 0;
+    text-align: center;
 }
