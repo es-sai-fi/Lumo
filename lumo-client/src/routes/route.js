@@ -9,6 +9,17 @@ const app = document.getElementById("app");
  */
 const viewURL = (name) => new URL(`../views/${name}.html`, import.meta.url);
 
+const styleURL = (name) =>
+  new URL(`../styles/${name}.css`, import.meta.url).href;
+
+const viewStyleMap = {
+  login: "auth",
+  register: "auth",
+  "password-recovery": "auth",
+  home: "home",
+  board: "board",
+};
+
 /**
  * Load an HTML fragment by view name and initialize its corresponding logic.
  * @async
@@ -24,8 +35,10 @@ async function loadView(name) {
   // Debug
   console.log(`Loaded view: ${name}`);
 
-  const cssURL = new URL(`../styles/${name}.css`, import.meta.url).href;
-  loadViewCSS(cssURL);
+  const cssFileName = viewStyleMap[name];
+  if (cssFileName) {
+    loadViewCSS(styleURL(cssFileName));
+  }
 
   if (name === "register") initRegister();
   if (name === "board") initBoard();
