@@ -2,12 +2,11 @@ const GlobalController = require("./GlobalController");
 const List = require("../models/List");
 
 /**
- * Controller for List resources, extending GlobalController.
- * Implements custom logic for creating lists (unique per user).
+ * Controller class for managing List resources.
  */
 class ListController extends GlobalController {
   constructor() {
-    super(List); // Si luego tienes un DAO, reemplaza List por ListDAO
+    super(ListDAO);
   }
 
   /**
@@ -30,9 +29,15 @@ class ListController extends GlobalController {
       }
 
       const list = await this.dao.create({ name, description, user });
+
       res.status(201).json(list);
     } catch (error) {
-      res.status(500).json({ message: "Error creating list", error });
+      if (process.env.NODE_ENV === "development") {
+        console.log(`Internal server error: ${error.message}`);
+      }
+      res
+        .status(500)
+        .json({ message: "Internal server error, try again later" });
     }
   }
 
@@ -48,9 +53,17 @@ class ListController extends GlobalController {
       const lists = await this.dao.find({ user });
       res.status(200).json(lists);
     } catch (error) {
-      res.status(500).json({ message: "Error fetching lists", error });
+      if (process.env.NODE_ENV === "development") {
+        console.log(`Internal server error: ${error.message}`);
+      }
+      res
+        .status(500)
+        .json({ message: "Internal server error, try again later" });
     }
   }
 }
 
+/**
+ * Export a singleton instance of ListController.
+ */
 module.exports = new ListController();
