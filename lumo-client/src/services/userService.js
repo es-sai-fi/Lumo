@@ -43,3 +43,9 @@ export async function loginUser({ email, password }) {
     password,
   });
 }
+
+export async function getUserProfileInfo({ email }) {
+  return http.get("no sé", {
+    email,
+  });
+}

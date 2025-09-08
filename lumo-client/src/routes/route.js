@@ -1,4 +1,8 @@
-import { registerUser, loginUser } from "../services/userService.js";
+import {
+  registerUser,
+  loginUser,
+  getUserProfileInfo,
+} from "../services/userService.js";
 
 const app = document.getElementById("app");
 
@@ -26,6 +30,7 @@ const viewStyleMap = {
   "password-recovery": "auth",
   home: "home",
   board: "board",
+  profile: "profile",
 };
 
 /**
@@ -52,6 +57,7 @@ async function loadView(name) {
   if (name === "register") initRegister();
   if (name === "login") initLogin();
   if (name === "board") initBoard();
+  // if (name === "profile") initProfile();
 }
 
 /**
@@ -87,7 +93,14 @@ export function initRouter() {
 function handleRoute() {
   const path =
     (location.hash.startsWith("#/") ? location.hash.slice(2) : "") || "home";
-  const known = ["home", "login", "register", "password-recovery", "dashboard"];
+  const known = [
+    "home",
+    "login",
+    "register",
+    "password-recovery",
+    "dashboard",
+    "profile",
+  ];
   const route = known.includes(path) ? path : "home";
 
   loadView(route).catch((err) => {
@@ -97,6 +110,31 @@ function handleRoute() {
 }
 
 /* ---- View-specific logic ---- */
+
+/**
+ * Initialize the "profile" view.
+ * Receives the user information from the server and shows it.
+ */
+async function initProfile() {
+  const fullNameSpan = document.getElementById("userFullName");
+  const userCreatedAtSpan = document.getElementById("userCreatedAt");
+  const userEmailSpan = document.getElementById("userEmail");
+
+  try {
+    const userData = await getUserProfileInfo();
+
+    fullNameSpan.textContent = `${userData.firstName} ${userData.lastName}`;
+    userCreatedAtSpan.textContent = new Date(
+      userData.createdAt,
+    ).toLocaleDateString();
+    userEmailSpan.textContent = userData.email;
+  } catch (err) {
+    console.error("Couldn't fetch user profile:", err);
+    fullNameSpan.textContent = "Error loading profile";
+    userCreatedAtSpan.textContent = "-";
+    userEmailSpan.textContent = "-";
+  }
+}
 
 /**
  * Initialize the "register" view.
