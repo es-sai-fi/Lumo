@@ -18,7 +18,7 @@ form button[type="submit"] {
     cursor: pointer;
 }
 
-#main {
+#container {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -64,10 +64,4 @@ form button[type="submit"] {
     display: block;
     margin-bottom: 1rem;
     align-items: left;
-}
-
-.feedback {
-    font-size: 0.8rem;
-    margin-top: 0.3rem;
-    color: red;
 }

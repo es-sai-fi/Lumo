@@ -1,117 +1,92 @@
-<!doctype html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <link rel="icon" type="image/png" href="/lumo-logo.png" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="../styles/auth.css" />
-        <title>Register</title>
-    </head>
-    <body>
-        <script type="module" src="/src/register.js"></script>
-        <main id="main">
-            <div class="box">
-                <a href="/login" id="previous">
-                    <img src="/previous.png" alt="Previous Page" />
-                </a>
+<div id="container">
+    <div class="box">
+        <a href="#/login" id="previous">
+            <img src="/previous.png" alt="Previous Page" />
+        </a>
 
-                <a href="/home">
-                    <img src="/lumo-logo.png" alt="Lumo Logo" class="logo" />
-                </a>
+        <a href="#/home">
+            <img src="/lumo-logo.png" alt="Lumo Logo" class="logo" />
+        </a>
 
-                <h1>Register</h1>
+        <h1>Register</h1>
 
-                <form id="registerForm" method="post" autocomplete="off">
-                    <div class="row">
-                        <label for="Name"> Name: </label>
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            placeholder="Example: John"
-                            minlength="2"
-                            required
-                        />
-                    </div>
-
-                    <div class="row">
-                        <label for="Last Name"> Last Name: </label>
-                        <input
-                            type="text"
-                            id="lastName"
-                            name="lastName"
-                            placeholder="Example: Doe"
-                            minlength="2"
-                            required
-                        />
-                    </div>
-
-                    <div class="row">
-                        <label for="age"> Age: </label>
-                        <input
-                            type="number"
-                            id="age"
-                            name="age"
-                            placeholder="Age must be greater or equal to 13"
-                            min="13"
-                            required
-                        />
-                    </div>
-
-                    <div class="row">
-                        <label for="email"> Email: </label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            placeholder="Example: user@example.com"
-                            required
-                        />
-                    </div>
-
-                    <div class="row">
-                        <label for="password"> Password: </label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            placeholder="Create a password"
-                            minlength="8"
-                            required
-                        />
-                        <small
-                            class="feedback"
-                            id="createPasswordFeedback"
-                            hidden
-                        >
-                            Must contain at least 8 characters, one uppercase,
-                            one lowercase, one number, and one special
-                            character.
-                        </small>
-                    </div>
-
-                    <div class="row">
-                        <label for="confirmPassword"> Confirm Password: </label>
-                        <input
-                            type="password"
-                            id="confirmPassword"
-                            name="confirmPassword"
-                            placeholder="Enter again the password"
-                            minlength="8"
-                            required
-                        />
-                        <small
-                            class="feedback"
-                            id="confirmPasswordFeedback"
-                            hidden
-                        >
-                            Passwords must match.
-                        </small>
-                    </div>
-
-                    <button type="submit">Enter</button>
-                </form>
+        <form id="registerForm" method="post" autocomplete="off">
+            <div class="row">
+                <label for="firstName"> Name: </label>
+                <input
+                    type="text"
+                    id="firstName"
+                    name="firstName"
+                    placeholder="Example: John"
+                    minlength="2"
+                    required
+                />
             </div>
-        </main>
-    </body>
-</html>
+
+            <div class="row">
+                <label for="lastName"> Last Name: </label>
+                <input
+                    type="text"
+                    id="lastName"
+                    name="lastName"
+                    placeholder="Example: Doe"
+                    minlength="2"
+                    required
+                />
+            </div>
+
+            <div class="row">
+                <label for="age"> Age: </label>
+                <input
+                    type="number"
+                    id="age"
+                    name="age"
+                    placeholder="Age must be greater or equal to 13"
+                    min="13"
+                    required
+                />
+            </div>
+
+            <div class="row">
+                <label for="email"> Email: </label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Example: user@example.com"
+                    required
+                />
+            </div>
+
+            <div class="row">
+                <label for="password"> Password: </label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Create a password"
+                    minlength="8"
+                    required
+                />
+            </div>
+
+            <div class="row">
+                <label for="confirmPassword"> Confirm Password: </label>
+                <input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    placeholder="Enter again the password"
+                    minlength="8"
+                    required
+                />
+            </div>
+
+            <button type="submit">Enter</button>
+            <p
+                id="registerMsg"
+                style="min-height: 1.25rem; margin: 0.25rem 0 0"
+            ></p>
+        </form>
+    </div>
+</div>
