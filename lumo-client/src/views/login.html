@@ -1,62 +1,49 @@
-<!doctype html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <link rel="icon" type="image/png" href="/lumo-logo.png" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="../styles/auth.css" />
-        <title>Login</title>
-    </head>
-    <body>
-        <script type="module" src="/src/login.js"></script>
-        <main id="main">
-            <div class="box">
-                <a href="/home">
-                    <img src="/lumo-logo.png" alt="Lumo Logo" class="logo" />
-                </a>
+<div id="container">
+    <div class="box">
+        <a href="/home">
+            <img src="/lumo-logo.png" alt="Logo" class="logo" />
+        </a>
 
-                <h1>Log in</h1>
+        <h1>Log in</h1>
 
-                <form method="post">
-                    <div class="row">
-                        <label for="email"> Email: </label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            placeholder="Example: user@example.com"
-                            required
-                        />
-                    </div>
-
-                    <div class="row">
-                        <label for="password"> Password: </label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            placeholder="Enter your password"
-                            required
-                        />
-                    </div>
-
-                    <div class="row">
-                        <input type="checkbox" id="rememberMe" value="true" />
-                        <label for="rememberMe">Remember me</label>
-                    </div>
-
-                    <button type="submit">Enter</button>
-                </form>
-                <p>
-                    Forgot password?
-                    <a href="/recover-password"> Recorver password </a>
-                </p>
-                <hr />
-                <p>
-                    Not registered?
-                    <a href="/sing-up"> Create an account </a>
-                </p>
+        <form id="loginForm" method="post">
+            <div class="row">
+                <label for="email"> Email: </label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Example: user@example.com"
+                    required
+                />
             </div>
-        </main>
-    </body>
-</html>
+
+            <div class="row">
+                <label for="password"> Password: </label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    required
+                />
+            </div>
+
+            <div class="row">
+                <input type="checkbox" id="rememberMe" value="true" />
+                <label for="rememberMe">Remember me</label>
+            </div>
+
+            <button type="submit">Enter</button>
+        </form>
+        <p>
+            Forgot password?
+            <a href="#/recover-password"> Recorver password </a>
+        </p>
+        <hr />
+        <p>
+            Not registered?
+            <a href="#/register"> Create an account </a>
+        </p>
+    </div>
+</div>
