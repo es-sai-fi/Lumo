@@ -62,7 +62,7 @@ async function loadView(name) {
 
   if (name === "register") initRegister();
   if (name === "login") initLogin();
-  if (name === "board") initBoard();
+  if (name === "board") initDashboard();
   // if (name === "profile") initProfile();
 }
 
@@ -299,7 +299,7 @@ function initLogin() {
  * Initialize the "board" view.
  * Sets up the todo form, input, and list with create/remove/toggle logic.
  */
-function initBoard() {
+function initDashboard() {
   const form = document.getElementById("todoForm");
   const input = document.getElementById("newTodo");
   const list = document.getElementById("todoList");
