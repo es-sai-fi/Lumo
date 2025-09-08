@@ -1,69 +1,83 @@
-<div id="container">
-    <header>
-        <nav id="menu">
-            <div class="logo">Lumo</div>
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Lumo</title>
 
-            <ul class="links">
-                <li><a href="/">Inicio</a></li>
-                <li><a href="/">Sobre Nosotros</a></li>
-                <li><a href="/">Contacto</a></li>
-            </ul>
-            <div class="login-btn">
-                <a href="#/login">Iniciar Sesión</a>
+        <link rel="stylesheet" href="../styles/home.css" />
+    </head>
+
+    <body>
+        <!-- Menu bar-->
+        <header>
+            <nav id="menu">
+                <div class="logo">Lumo</div>
+
+                <ul class="links">
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/">Sobre Nosotros</a></li>
+                    <li><a href="/">Contacto</a></li>
+                </ul>
+                <div class="login-btn">
+                    <a href="#/login" role="button">Iniciar Sesión</a>
+                </div>
+            </nav>
+        </header>
+        <!-- Page info-->
+        <main id="principal">
+            <div class="content">
+                <div class="text-left">
+                    <h1>
+                        Únete a la web más eficiente <br />para personalizar tus
+                        tareas
+                    </h1>
+                    <a href="#/login">Únete</a>
+                </div>
+                <div class="image">
+                    <img src="/lumo-client/public/mainphoto.png" />
+                </div>
             </div>
-        </nav>
-    </header>
-    <main id="principal">
-        <div class="content">
-            <div class="text-left">
-                <h1>
-                    Unete a la web más eficiente <br />para personalizar tus
-                    tareas
-                </h1>
-                <a href="#/login">Unete</a>
+            <div class="text-center">
+                <h2>
+                    Regístrate hoy y transforma<br />
+                    la manera en que gestionas<br />
+                    tu <span class="gradient-text">mundo.</span>
+                </h2>
             </div>
-            <div class="image">
-                <img src="/lumo-client/public/mainphoto.png" />
+        </main>
+        <!-- Footer -->
+        <footer>
+            <div class="left-foot">
+                <div class="logo">Lumo</div>
+                <p>© 2025 JSquad</p>
+                <p>Todos los derechos reservados</p>
             </div>
-        </div>
-        <div class="text-center">
-            <h2>
-                Regístrate hoy y transforma<br />
-                la manera en que gestionas<br />
-                tu mundo.
-            </h2>
-        </div>
-    </main>
-    <footer>
-        <div class="left-foot">
-            <div class="logo">Lumo</div>
-            <p>© 2025 JSquad</p>
-            <p>Todos los derechos reservados</p>
-        </div>
-        <div class="medium-foot">
-            <p>Creado por JSquad</p>
-            <ul>
-                <li>
-                    <a href="/about-us">Sobre nosotros</a>
-                </li>
-                <li>
-                    <a href="/blog">blog</a>
-                </li>
-            </ul>
-        </div>
-        <div class="right-foot">
-            <p>Soporte</p>
-            <ul>
-                <li>
-                    <a href="/contact-us">Contact us</a>
-                </li>
-                <li>
-                    <a href="/service-terms">Terminos del servicio</a>
-                </li>
-                <li>
-                    <a href="/policies">Politicas de privacidad</a>
-                </li>
-            </ul>
-        </div>
-    </footer>
-</div>
+            <div class="medium-foot">
+                <p>Creado por JSquad</p>
+                <ul>
+                    <li>
+                        <a href="/about-us">Sobre nosotros</a>
+                    </li>
+                    <li>
+                        <a href="/blog">blog</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="right-foot">
+                <p>Soporte</p>
+                <ul>
+                    <li>
+                        <a href="/service-terms">Terminos del servicio</a>
+                    </li>
+                    <li>
+                        <a href="/policies">Politicas de privacidad</a>
+                    </li>
+                    <li>
+                        <a href="/contact-us">Contáctanos</a>
+                    </li>
+                </ul>
+            </div>
+        </footer>
+    </body>
+</html>
