@@ -1,0 +1,66 @@
+/* Contenedor principal */
+.content-wrapper {
+  display: flex;
+  height: 100vh; /* pantalla completa */
+}
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+
+/* Sidebar */
+aside {
+  background-color: #263238;
+  width: 220px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  padding-top: 80px;
+  overflow-y: auto;
+}
+
+/* Menús */
+aside ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+aside li {
+  margin: 10px 0;
+}
+
+aside a {
+  color: #ffffff;
+  text-decoration: none;
+  display: block;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-variation-settings: 'wght' 500;
+  font-size: 1.3rem;
+
+}
+
+aside a:hover {
+  background-color: #444;
+}
+
+/* Separador */
+aside hr {
+  border-color: #444;
+  margin: 16px 0;
+}
+
+/* Main */
+main {
+  flex: 1;
+ 
+  background-color: #f4f4f4;
+  padding: 20px;
+}
+
+/* Títulos de secciones */
+

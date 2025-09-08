@@ -26,6 +26,7 @@ const viewStyleMap = {
   "password-recovery": "auth",
   home: "home",
   board: "board",
+  dashboard: "dashboard",
 };
 
 /**
