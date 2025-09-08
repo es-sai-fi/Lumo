@@ -38,7 +38,7 @@ export async function registerUser({
 }
 
 export async function loginUser({ email, password }) {
-  return http.post("no sé lmao", {
+  return http.post("/api/v1/users/login", {
     email,
     password,
   });

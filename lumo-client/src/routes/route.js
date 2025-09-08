@@ -209,34 +209,29 @@ function initRegister() {
   });
 }
 
-/**
- * Initialize the "login" view.
- * Attaches a submit handler to the login form to navigate to the board.
- */
 function initLogin() {
   const form = document.getElementById("loginForm");
   const msg = document.getElementById("loginMsg");
 
   if (!form) return;
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    msg.textContent = "";
-
-    // Retrieves the data from all the form.
-    const data = {
-      email: form.email.value.trim(),
-      password: form.password.value.trim(),
-    };
-
-    form.querySelector('button[type="submit"]').disabled = true;
-
+  // Función que maneja el login y guarda el token
+  async function handleLogin(data) {
     try {
-      await loginUser(data);
-      msg.textContent = "Succesfully logged in";
+      const response = await loginUser(data); // loginUser viene de userService.js
+      const token = response.token; // asumimos que el backend devuelve { token }
+
+      // Guardar token en localStorage
+      localStorage.setItem("token", token);
+
+      msg.textContent = "Successfully logged in";
       msg.style.color = "green";
       form.reset();
-      setTimeout(() => (location.hash = "#/board"), 400);
+
+      // Redirigir a board
+      setTimeout(() => {
+        location.hash = "#/board";
+      }, 400);
     } catch (err) {
       msg.textContent = `Couldn't log in: ${err.message}`;
       msg.style.color = "red";
@@ -244,6 +239,19 @@ function initLogin() {
     } finally {
       form.querySelector('button[type="submit"]').disabled = false;
     }
+  }
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    msg.textContent = "";
+
+    const data = {
+      email: form.email.value.trim(),
+      password: form.password.value.trim(),
+    };
+
+    form.querySelector('button[type="submit"]').disabled = true;
+    handleLogin(data);
   });
 }
 

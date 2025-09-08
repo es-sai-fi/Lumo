@@ -107,3 +107,26 @@ form button[type="submit"] {
     margin: 0.25rem 0 0;
     text-align: center;
 }
+
+#spinner {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 999;
+}
+
+#spinner img {
+    width: 10vw; /* ancho relativo al viewport */
+    max-width: 100px; /* tamaño máximo */
+    height: auto; /* mantiene la proporción */
+}
+
+/* Opcional: tamaños más pequeños para móviles */
+@media (max-width: 480px) {
+    #spinner img {
+        width: 15vw; /* un poco más grande relativo al viewport pequeño */
+        max-width: 80px;
+    }
+}

@@ -1,5 +1,7 @@
 const GlobalController = require("./GlobalController");
 const UserDAO = require("../dao/UserDAO");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 /**
  * Controller class for managing User resources.
@@ -10,7 +12,6 @@ class UserController extends GlobalController {
   }
 
   async create(req, res) {
-    console.log("BODY RECIBIDO:", req.body);
     let {
       firstName,
       lastName,
@@ -53,6 +54,45 @@ class UserController extends GlobalController {
       res.status(201).json(user);
     } catch (error) {
       res.status(400).json({ message: error.message });
+    }
+  }
+
+  async login(req, res) {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Email y contraseña son requeridos." });
+    }
+
+    try {
+      // Busca el usuario por email
+      const user = await this.dao.findOne({ email });
+      if (!user) {
+        return res
+          .status(401)
+          .json({ message: "Email or password are incorrect" });
+      }
+
+      // Compara la contraseña
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res
+          .status(401)
+          .json({ message: "Email or password are incorrect" });
+      }
+
+      // Genera token JWT
+      const payload = { id: user._id, email: user.email };
+      const token = jwt.sign(payload, process.env.JWT_SECRET, {
+        expiresIn: "1h", // duración del token
+      });
+
+      // Retorna el token
+      res.json({ token });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
     }
   }
 }
