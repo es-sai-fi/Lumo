@@ -20,12 +20,32 @@ async function loadView(name) {
   if (!res.ok) throw new Error(`Failed to load view: ${name}`);
   const html = await res.text();
   app.innerHTML = html;
-  console.log(name);
 
-  if (name === "home") initHome();
-  if (name === "login") initLogin();
+  // Debug
+  console.log(`Loaded view: ${name}`);
+
+  const cssURL = new URL(`../styles/${name}.css`, import.meta.url).href;
+  loadViewCSS(cssURL);
+
   if (name === "register") initRegister();
   if (name === "board") initBoard();
+}
+
+/**
+ * Dynamically load a CSS file, replacing the previous view's CSS if any.
+ * @param {string} href - URL of the CSS file
+ */
+function loadViewCSS(href) {
+  let link = document.getElementById("view-css");
+
+  if (!link) {
+    link = document.createElement("link");
+    link.id = "view-css";
+    link.rel = "stylesheet";
+    document.head.appendChild(link);
+  }
+
+  link.href = href;
 }
 
 /**
@@ -54,14 +74,6 @@ function handleRoute() {
 }
 
 /* ---- View-specific logic ---- */
-
-function initHome() {
-  console.log("hola");
-}
-
-function initLogin() {
-  console.log("hola");
-}
 
 /**
  * Initialize the "register" view.
