@@ -208,6 +208,7 @@ main {
   height: 25px;
   border-radius: 80%;
   display: inline-block;
+  
 }
 
 .circle.blue { background: #1e88e5; }
