@@ -1,4 +1,8 @@
-import { registerUser, loginUser } from "../services/userService.js";
+import {
+  registerUser,
+  loginUser,
+  getUserProfileInfo,
+} from "../services/userService.js";
 
 const app = document.getElementById("app");
 
@@ -26,6 +30,7 @@ const viewStyleMap = {
   "password-recovery": "auth",
   home: "home",
   board: "board",
+  profile: "profile",
   dashboard: "dashboard",
   ongoing: "dashboard",
   unassigned: "dashboard",
@@ -58,6 +63,7 @@ async function loadView(name) {
   if (name === "register") initRegister();
   if (name === "login") initLogin();
   if (name === "board") initBoard();
+  // if (name === "profile") initProfile();
 }
 
 /**
@@ -107,12 +113,37 @@ function handleRoute() {
 /* ---- View-specific logic ---- */
 
 /**
+ * Initialize the "profile" view.
+ * Receives the user information from the server and shows it.
+ */
+async function initProfile() {
+  const fullNameSpan = document.getElementById("userFullName");
+  const userCreatedAtSpan = document.getElementById("userCreatedAt");
+  const userEmailSpan = document.getElementById("userEmail");
+
+  try {
+    const userData = await getUserProfileInfo();
+
+    fullNameSpan.textContent = `${userData.firstName} ${userData.lastName}`;
+    userCreatedAtSpan.textContent = new Date(
+      userData.createdAt,
+    ).toLocaleDateString();
+    userEmailSpan.textContent = userData.email;
+  } catch (err) {
+    console.error("Couldn't fetch user profile:", err);
+    fullNameSpan.textContent = "Error loading profile";
+    userCreatedAtSpan.textContent = "-";
+    userEmailSpan.textContent = "-";
+  }
+}
+
+/**
  * Initialize the "register" view.
  * Attaches a submit handler to the register form to navigate to login.
  */
 function initRegister() {
   const form = document.getElementById("registerForm");
-  const msg = document.getElementById("registerMsg");
+  const msg = document.getElementById("message");
 
   if (!form) return;
 
@@ -153,59 +184,114 @@ function initRegister() {
 
     // Confirm password validation.
     if (data.password !== data.confirmPassword) {
-      msg.textContent = "Las contraseñas no coinciden.";
+      msg.textContent = "Passwords do not match.";
       return;
     }
 
     form.querySelector('button[type="submit"]').disabled = true;
 
     try {
+      // Retrieves the data from the form.
+      const data = {
+        firstName: form.firstName.value.trim(),
+        lastName: form.lastName.value.trim(),
+        age: form.age.value.trim(),
+        email: form.email.value.trim(),
+        password: form.password.value.trim(),
+        confirmPassword: form.confirmPassword.value.trim(),
+      };
+
+      // Field completion validation.
+      if (Object.values(data).some((v) => !v)) {
+        throw new Error("Please fill out all the fields.");
+      }
+
+      // Age validation.
+      const ageNum = Number(data.age);
+      if (isNaN(ageNum) || ageNum < 13) {
+        throw new Error("Age must be greater or equal to 13.");
+      }
+
+      // Password validation.
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+      if (!passwordRegex.test(data.password)) {
+        throw new Error(
+          "The password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.",
+        );
+      }
+
+      // Confirm password validation.
+      if (data.password !== data.confirmPassword) {
+        throw new Error("Passwords do not match.");
+      }
+
+      form.querySelector('button[type="submit"]').disabled = true;
+
       await registerUser(data);
-      msg.textContent = "Succesfully registered";
+
+      // Si llegó aquí es porque no hubo errores
+      const spinner = document.getElementById("spinner");
+      spinner.style.display = "block";
+
+      msg.textContent = "Successfully registered!";
       msg.style.color = "green";
+      msg.hidden = false;
+
       form.reset();
-      setTimeout(() => (location.hash = "#/login"), 400);
+
+      setTimeout(() => {
+        spinner.style.display = "none";
+        location.hash = "#/login";
+      }, 1000);
     } catch (err) {
-      msg.textContent = `Couldn't register: ${err.message}`;
-    } finally {
+      msg.textContent = err.message || "Registration failed";
+      msg.hidden = false;
       form.querySelector('button[type="submit"]').disabled = false;
     }
   });
 }
 
-/**
- * Initialize the "login" view.
- * Attaches a submit handler to the login form to navigate to the board.
- */
 function initLogin() {
   const form = document.getElementById("loginForm");
-  const msg = document.getElementById("loginMsg");
+  const msg = document.getElementById("message");
 
   if (!form) return;
 
-  form.addEventListener("submit", async (e) => {
+  // Función que maneja el login y guarda el token
+  async function handleLogin(data) {
+    try {
+      const response = await loginUser(data); // loginUser viene de userService.js
+      const token = response.token; // asumimos que el backend devuelve { token }
+
+      localStorage.setItem("token", token);
+
+      msg.textContent = "Successfully logged in";
+      msg.style.color = "green";
+      msg.hidden = false;
+      form.reset();
+
+      setTimeout(() => {
+        location.hash = "#/board";
+      }, 400);
+    } catch (err) {
+      msg.textContent = `Couldn't log in: ${err.message}`;
+      msg.hidden = false;
+    } finally {
+      form.querySelector('button[type="submit"]').disabled = false;
+    }
+  }
+
+  form.addEventListener("submit", (e) => {
     e.preventDefault();
     msg.textContent = "";
 
-    // Retrieves the data from all the form.
     const data = {
       email: form.email.value.trim(),
       password: form.password.value.trim(),
     };
 
     form.querySelector('button[type="submit"]').disabled = true;
-
-    try {
-      await loginUser(data);
-      msg.textContent = "Succesfully logged in";
-      msg.style.color = "green";
-      form.reset();
-      setTimeout(() => (location.hash = "#/board"), 400);
-    } catch (err) {
-      msg.textContent = `Couldn't log in: ${err.message}`;
-    } finally {
-      form.querySelector('button[type="submit"]').disabled = false;
-    }
+    handleLogin(data);
   });
 }
 

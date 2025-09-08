@@ -1,5 +1,7 @@
 const express = require("express");
 const userRoutes = require("./userRoutes");
+const taskRoutes = require('./taskRoutes');
+const listRoutes = require('./listRoutes');
 
 const router = express.Router();
 
@@ -15,7 +17,8 @@ const router = express.Router();
  *   - DELETE /users/:id  → Delete a user by ID
  */
 router.use("/users", userRoutes);
-
+router.use('/tasks', taskRoutes);
+router.use('/lists', listRoutes);
 /**
  * Export the main router instance.
  * This is imported in `index.js` and mounted under `/api/v1`.

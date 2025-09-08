@@ -46,6 +46,15 @@ router.put("/:id", (req, res) => UserController.update(req, res));
 router.delete("/:id", (req, res) => UserController.delete(req, res));
 
 /**
+ * @route POST /users/login
+ * @description Login a user and return a JWT token.
+ * @body {string} email - The user's email.
+ * @body {string} password - The user's password.
+ * @access Public
+ */
+router.post("/login", (req, res) => UserController.login(req, res));
+
+/**
  * Export the router instance to be mounted in the main routes file.
  */
 module.exports = router;
