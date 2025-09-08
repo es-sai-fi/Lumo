@@ -274,3 +274,47 @@ main {
   display: flex;
   justify-content: flex-end;
 }
+
+/* Modal styles for create-task */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    margin-left: 5rem;
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-window {
+    background: #7b8c94;
+    border-radius: 16px;
+    padding: 2rem 1.5rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+    min-width: 320px;
+    max-width: 90vw;
+    position: relative;
+    justify-items: center;
+
+}
+
+.previous-btn {
+    color: #000000;
+    
+    position: absolute;
+    left: 16px;
+    top: 18px;
+    right: 16px;
+    border: none;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 700;
+
+    display: flex;
+    align-items: center;
+
+}
