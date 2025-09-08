@@ -31,6 +31,8 @@ const viewStyleMap = {
   home: "home",
   board: "board",
   profile: "profile",
+  dashboard: "dashboard",
+  all: "dashboard",
 };
 
 /**
@@ -100,6 +102,7 @@ function handleRoute() {
     "password-recovery",
     "dashboard",
     "profile",
+    "all",
   ];
   const route = known.includes(path) ? path : "home";
 
