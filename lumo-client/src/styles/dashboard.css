@@ -65,7 +65,7 @@ aside hr {
 main {
     flex: 1;
 
-    background-color: #f4f4f4;
+    background-color: #fffefe;
     padding: 20px;
 }
 
@@ -107,6 +107,7 @@ main {
 
 #static-ul li:nth-child(5) a::before {
     background-color: #1e88e5;
+    
     /* All */
 }
 /* ---------------------------------- */
