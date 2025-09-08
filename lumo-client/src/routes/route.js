@@ -1,4 +1,4 @@
-import { registerUser } from "../services/userService.js";
+import { registerUser, loginUser } from "../services/userService.js";
 
 const app = document.getElementById("app");
 
@@ -9,9 +9,17 @@ const app = document.getElementById("app");
  */
 const viewURL = (name) => new URL(`../views/${name}.html`, import.meta.url);
 
+/**
+ * Build a safe URL for fetching style fragments inside Vite (dev and build).
+ * @param {string} name - The name of the style (without extension).
+ * @returns {URL} The resolved URL for the style HTML file.
+ */
 const styleURL = (name) =>
   new URL(`../styles/${name}.css`, import.meta.url).href;
 
+/**
+ * Map that associates view names to css styles.
+ */
 const viewStyleMap = {
   login: "auth",
   register: "auth",
@@ -35,12 +43,14 @@ async function loadView(name) {
   // Debug
   console.log(`Loaded view: ${name}`);
 
+  // Checks the map to see which file to load
   const cssFileName = viewStyleMap[name];
   if (cssFileName) {
     loadViewCSS(styleURL(cssFileName));
   }
 
   if (name === "register") initRegister();
+  if (name === "login") initLogin();
   if (name === "board") initBoard();
 }
 
@@ -90,7 +100,7 @@ function handleRoute() {
 
 /**
  * Initialize the "register" view.
- * Attaches a submit handler to the register form to navigate to the board.
+ * Attaches a submit handler to the register form to navigate to login.
  */
 function initRegister() {
   const form = document.getElementById("registerForm");
@@ -102,38 +112,38 @@ function initRegister() {
     e.preventDefault();
     msg.textContent = "";
 
-    // Recolecta todos los campos del formulario
+    // Retrieves the data from the form.
     const data = {
       firstName: form.firstName.value.trim(),
       lastName: form.lastName.value.trim(),
       age: form.age.value.trim(),
       email: form.email.value.trim(),
-      password: form.password.value,
-      confirmPassword: form.confirmPassword.value,
+      password: form.password.value.trim(),
+      confirmPassword: form.confirmPassword.value.trim(),
     };
 
-    // Validación rápida en frontend
+    // Field completion validation.
     if (Object.values(data).some((v) => !v)) {
-      msg.textContent = "Por favor completa todos los campos.";
+      msg.textContent = "Please fill out all the fields.";
       return;
     }
 
-    //validación de edad
+    // Age validation.
     const ageNum = Number(data.age);
     if (isNaN(ageNum) || ageNum < 13) {
-      msg.textContent = "La edad debe ser un número mayor o igual a 13.";
+      msg.textContent = "Age must be greater or equal to 13.";
       return;
     }
 
-    //validación de contraseña
+    // Password validation.
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
     if (!passwordRegex.test(data.password)) {
       msg.textContent =
-        "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.";
+        "The password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.";
       return;
     }
 
-    //validación de confirmar contraseña
+    // Confirm password validation.
     if (data.password !== data.confirmPassword) {
       msg.textContent = "Las contraseñas no coinciden.";
       return;
@@ -143,11 +153,48 @@ function initRegister() {
 
     try {
       await registerUser(data);
-      msg.textContent = "Registro exitoso";
+      msg.textContent = "Succesfully registered";
+      msg.style.color = "green";
+      form.reset();
+      setTimeout(() => (location.hash = "#/login"), 400);
+    } catch (err) {
+      msg.textContent = `Couldn't register: ${err.message}`;
+    } finally {
+      form.querySelector('button[type="submit"]').disabled = false;
+    }
+  });
+}
+
+/**
+ * Initialize the "login" view.
+ * Attaches a submit handler to the login form to navigate to the board.
+ */
+function initLogin() {
+  const form = document.getElementById("loginForm");
+  const msg = document.getElementById("loginMsg");
+
+  if (!form) return;
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    msg.textContent = "";
+
+    // Retrieves the data from all the form.
+    const data = {
+      email: form.email.value.trim(),
+      password: form.password.value.trim(),
+    };
+
+    form.querySelector('button[type="submit"]').disabled = true;
+
+    try {
+      await loginUser(data);
+      msg.textContent = "Succesfully logged in";
+      msg.style.color = "green";
       form.reset();
       setTimeout(() => (location.hash = "#/board"), 400);
     } catch (err) {
-      msg.textContent = `No se pudo registrar: ${err.message}`;
+      msg.textContent = `Couldn't log in: ${err.message}`;
     } finally {
       form.querySelector('button[type="submit"]').disabled = false;
     }

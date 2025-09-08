@@ -93,3 +93,17 @@ form button[type="submit"] {
     width: 2rem;
     height: auto;
 }
+
+#registerMsg {
+    color: red;
+    min-height: 1.25rem;
+    margin: 0.25rem 0 0;
+    text-align: center;
+}
+
+#loginMsg {
+    color: red;
+    min-height: 1.25rem;
+    margin: 0.25rem 0 0;
+    text-align: center;
+}
