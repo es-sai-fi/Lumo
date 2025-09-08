@@ -1,4 +1,4 @@
-/* Contenedor principal */
+/* Principal container */
 .content-wrapper {
     display: flex;
     height: 100vh;
@@ -7,6 +7,7 @@
 
 body {
     font-family: 'Inter', sans-serif;
+    margin: 0;
 }
 
 
@@ -22,6 +23,7 @@ aside {
     flex-direction: column;
     padding-top: 9px;
     overflow-y: auto;
+    
 }
 
 /* Menus */
@@ -64,16 +66,43 @@ aside hr {
 /* Main */
 main {
     flex: 1;
-
+    margin-left: 220px;
     background-color: #fffefe;
     padding: 20px;
+    
 }
+/* ---------------------------------- */
+/* Responsive */
+@media (max-width: 768px) {
+    aside {
+        width: 150px; 
+        
+    }
+
+    main {
+        margin-left: 150px; /* adjusts to new width */
+    }
+
+    #static-ul li a {
+        font-size: 1rem;
+        padding: 10px 9px;
+        gap: 2px;
+        margin-left: -20px;
+    }
+
+    #static-ul li a::before {
+        width: 12px;
+        height: 12px;
+    }
+}
+
 
 /* Menu styles */
 #static-ul li a {
     color: #fff;
     font-size: 1.2rem;
     display: flex;
+    gap: 10px;
     align-items: center;
     padding: 12px 24px;
     position: relative;
@@ -83,10 +112,10 @@ main {
 #static-ul li a::before {
     content: "";
     display: inline-block;
-    width: 25px;
-    height: 25px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
-    margin-right: 20px;
+    flex-shrink: 0;
 }
 
 /* Colors for each section */
@@ -148,3 +177,4 @@ main {
     color: #dcdcdc;
 
 }
+
