@@ -1,19 +1,11 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const ListController = require('../controllers/ListController');
+const ListController = require("../controllers/ListController");
 
-/**
- * @route POST /lists
- * @description Create a new list
- * @access Public
- */
-router.post("/", (req, res) => new ListController().createList(req, res));
+router.post("/", (req, res) => ListController.create(req, es));
+router.get("/:userId", (req, res) => ListController.getUserLists(req, res));
+router.get("/list_tasks/:listId", (req, res) =>
+  ListController.getListTasks(req, res),
+);
 
-/**
- * @route GET /lists
- * @description Get all lists for a user
- * @access Public
- */
-router.get("/", (req, res) => new ListController().getListsByUser(req, res));
-
-module.exports = router;
+module.exports = router;

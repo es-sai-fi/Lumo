@@ -1,69 +1,75 @@
 const GlobalController = require("./GlobalController");
 const ListDAO = require("../dao/ListDAO");
+const TaskDAO = require("../dao/TaskDAO");
 
-/**
- * Controller class for managing List resources.
- */
 class ListController extends GlobalController {
-  constructor() {
-    super(ListDAO);
-  }
-
-  /**
-   * Create a new list ensuring the name is unique for the user.
-   */
+  // Create a new list
   async create(req, res) {
-    const { name, description, user } = req.body;
+    const { title, user } = req.body;
 
-    if (!name || !user) {
-      return res.status(400).json({ message: "Name and user are required." });
+    if (!title || !user) {
+      return res.status(400).json({
+        message: "Title and user are required.",
+      });
     }
 
     try {
-      // Check if list with same name exists for this user
-      const exists = await this.dao.findOne({ name, user });
+      const exists = await ListDAO.findOne({ title, user });
+
       if (exists) {
-        return res
-          .status(409)
-          .json({ message: "List name already exists for this user." });
+        return res.status(409).json({
+          message: "List name already exists for this user.",
+        });
       }
 
-      const list = await this.dao.create({ name, description, user });
+      const list = await ListDAO.create({ title, user });
 
       res.status(201).json(list);
     } catch (error) {
-      if (process.env.NODE_ENV === "development") {
-        console.log(`Internal server error: ${error.message}`);
-      }
-      res
-        .status(500)
-        .json({ message: "Internal server error, try again later" });
+      console.error("Error creating list:", error);
+      res.status(500).json({
+        message: "Internal server error, try again later",
+      });
     }
   }
 
-  /**
-   * Get lists filtered by user.
-   */
-  async getAll(req, res) {
-    const { user } = req.query;
+  async getUserLists(req, res) {
+    const user = req.params.userId;
+
     if (!user) {
       return res.status(400).json({ message: "User is required." });
     }
     try {
-      const lists = await this.dao.find({ user });
+      console.log(user);
+      const lists = await ListDAO.getAll({ user });
+      console.log(lists);
+
       res.status(200).json(lists);
     } catch (error) {
-      if (process.env.NODE_ENV === "development") {
-        console.log(`Internal server error: ${error.message}`);
-      }
-      res
-        .status(500)
-        .json({ message: "Internal server error, try again later" });
+      console.error("Error getting lists:", error);
+      res.status(500).json({
+        message: "Internal server error, try again later",
+      });
+    }
+  }
+
+  async getListTasks(req, res) {
+    const listId = req.params.listId;
+
+    if (!listId) {
+      return res.status(400).json({ message: "listId is required." });
+    }
+
+    try {
+      const tasks = await TaskDAO.getAll({ list: listId });
+      res.status(200).json(tasks);
+    } catch (err) {
+      console.error("Error getting tasks:", err);
+      res.status(500).json({
+        message: "Internal server error, try again later",
+      });
     }
   }
 }
 
-/**
- * Export a singleton instance of ListController.
- */
 module.exports = new ListController();
