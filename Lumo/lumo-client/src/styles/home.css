@@ -1,0 +1,235 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+/*Menu bar*/
+#menu {
+    background-color:rgb(252, 250, 246);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 auto;
+    padding: 8px 3rem;
+    box-sizing: border-box;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+#menu ul {
+    font-size: 1.2rem;
+    list-style-type: none;
+    display: flex;
+    gap: 1rem;
+}
+#menu li a{
+    text-decoration: none;
+    color: inherit;
+    margin-left: 2rem;
+}
+.logo {
+    font-size: 2rem;
+    color: orange;
+    font-weight: bold;
+}
+
+.login-btn a{
+    text-decoration: none;
+    border-radius: 2px;
+    color: white;
+    background-color: orange;
+    padding: 10px 2rem;
+    
+}
+/*Page informatión */
+body {
+    margin: 0;
+    background-color: rgba(226, 233, 233, 0.521);
+}
+#principal {
+    justify-content: space-between;
+}
+.content{
+    display: flex;
+    align-items: center;
+ 
+    box-sizing: border-box;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 1rem;
+}
+h1 {
+    line-height: 4rem;
+    margin-left: 5rem;
+    margin-bottom: 2rem;
+    font-size: 3rem;
+    background: linear-gradient(45deg, orange, red);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}   
+#principal img{
+    display: block;
+    max-width: 100%;
+    margin-top: 2rem;
+    height: auto;
+    margin-left: 8rem;
+
+}
+#principal a {
+    margin-top: 2rem;
+    text-decoration: none;
+    font-size: 20px;
+    border-color: black;
+    border-style: ridge;
+    top: 22rem;
+    margin-left: 18rem;
+    padding: 5px 3rem;
+    color: white;
+    background-color: orange;
+    border-radius: 4px;
+}
+#principal .text-center{
+    margin: 0rem;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    font-size: 1.8rem;
+}
+.gradient-text {
+    background: linear-gradient(45deg, orange, rgb(64, 255, 0));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;/* estándar */
+    font-weight: bold;
+}
+/* Footer */
+footer {
+    background-color: #152138;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    text-align: center;
+    padding: 2rem 6rem;
+  
+}
+footer .medium-foot p,
+footer .right-foot p{
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+footer .left-foot,
+footer .medium-foot,
+footer .right-foot {
+    color: whitesmoke;
+}
+footer .medium-foot,
+footer .right-foot{
+    margin-top: 0.5rem;
+}
+.medium-foot ul,
+.right-foot ul {
+    list-style: none;
+    line-height: 1.5rem;
+}
+.right-foot {
+    margin-top: 0.3rem;
+}
+.medium-foot a,
+.right-foot a {
+    line-height: 1rem;
+    text-decoration: none;
+    color: white;
+}
+
+/* Media Responsive */
+@media (max-width: 1200px) {
+    h1 {
+        font-size: 2.2rem;
+        line-height: 3rem;
+    }
+    #menu {
+        padding: 8px 1.5rem;
+    }
+    #menu .login-btn {
+        margin-right: 15px;
+    }
+    #menu ul {
+        gap: 0.5rem;
+    }
+    #principal img {
+        margin-left:auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .content {
+        flex-direction: column;
+        text-align: center;
+    }
+    h1 {
+        margin: 1rem 0;
+        font-size: 2rem;
+    }
+    #principal a {
+        margin: 1rem auto;
+    }
+    #principal img {
+        margin: 1rem auto 0 auto;
+        max-width: 100%;
+        height: auto;
+    }
+    #menu {
+       
+        align-items: center;
+        gap: 1rem;
+     
+    }
+    #menu ul {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.8rem;
+    
+    }
+    footer {
+        flex-direction: column;
+    }
+   
+}
+@media (max-width: 560px) {
+    #menu ul {
+    align-items: center;
+    }
+    footer {
+        margin: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-btn a {
+       padding: 4px 2px;
+    }
+    .logo {
+        padding: 2px 2px;
+    }
+
+    #menu li{
+        font-size: 0;
+        }
+    h1 {
+        line-height: 2.2rem;
+        font-size: 2rem;
+    }
+    #principal .text-center {
+        font-size: 1.2rem;
+        padding: 0 1rem;
+    }
+    .login-btn a {
+        bottom: 42px;
+        padding: 8px 4px;
+        font-size: 0.9rem;
+    }
+    footer {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.8rem
+    }
+}
