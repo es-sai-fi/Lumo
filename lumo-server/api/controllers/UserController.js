@@ -1,10 +1,10 @@
 const GlobalController = require("./GlobalController");
 const UserDAO = require("../dao/UserDAO");
+const ListController = require("./ListController");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
 const { sendMail } = require("../utils/mailer");
-
 
 /**
  * Controller class for managing User resources.
@@ -56,10 +56,9 @@ class UserController extends GlobalController {
         password: hashedPassword,
       });
 
-      const listDefault = await List.create({
+      const listDefault = await ListController.dao.create({
         title: "Tasks",
         user: user._id,
-        // isDefault can be added to List schema if needed
       });
 
       res.status(201).json({ id: user._id });
@@ -101,13 +100,19 @@ class UserController extends GlobalController {
 
       // Ensure the user has a default "Tasks" list (idempotent)
       try {
-        const existingDefault = await List.findOne({ user: user._id, title: "Tasks" });
+        const existingDefault = await List.findOne({
+          user: user._id,
+          title: "Tasks",
+        });
         if (!existingDefault) {
           await List.create({ title: "Tasks", user: user._id });
         }
       } catch (e) {
         if (process.env.NODE_ENV === "development") {
-          console.warn("Could not ensure default Tasks list on login:", e.message);
+          console.warn(
+            "Could not ensure default Tasks list on login:",
+            e.message,
+          );
         }
         // do not block login on this
       }
@@ -127,7 +132,7 @@ class UserController extends GlobalController {
         .json({ message: "Internal server error, try again later" });
     }
   }
-    async forgotPassword(req, res) {
+  async forgotPassword(req, res) {
     const { email } = req.body;
 
     if (!email) {
@@ -141,11 +146,9 @@ class UserController extends GlobalController {
       }
 
       // Generar JWT token válido por 1 hora
-      const token = jwt.sign(
-        { id: user._id },
-        process.env.JWT_SECRET,
-        { expiresIn: "1h" }
-      );
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+        expiresIn: "1h",
+      });
 
       // Guardar token y expiración en la DB
       user.resetPasswordToken = token;
@@ -154,7 +157,7 @@ class UserController extends GlobalController {
 
       const resetLink = `http://localhost:5173/reset-password?token=${token}`;
 
-      // Mandar correo 
+      // Mandar correo
       await sendMail(
         user.email,
         "Password Reset Instructions",
@@ -171,7 +174,7 @@ class UserController extends GlobalController {
           <p><b>Important:</b> This link will expire in 1 hour and can be used only once.</p>
           <p>If you did not request this, please ignore the email.</p>
           <p>Best regards,<br/>Lumo Support Team</p>
-        `
+        `,
       );
 
       res.status(200).json({ message: "Reset link sent to your email" });
@@ -199,7 +202,7 @@ class UserController extends GlobalController {
       const user = await this.dao.findOne({
         _id: decoded.id,
         resetPasswordToken: token,
-        resetPasswordExpires: { $gt: Date.now() }
+        resetPasswordExpires: { $gt: Date.now() },
       });
 
       if (!user) {
@@ -221,7 +224,7 @@ class UserController extends GlobalController {
           <p>Your password has been successfully changed.</p>
           <p>If you did not perform this action, contact support immediately.</p>
           <p>Best regards,<br/>Lumo Support Team</p>
-        `
+        `,
       );
 
       res.status(200).json({ message: "Password has been reset successfully" });
@@ -230,9 +233,6 @@ class UserController extends GlobalController {
       res.status(500).json({ message: "Internal server error" });
     }
   }
-
-
-  
 }
 
 /**

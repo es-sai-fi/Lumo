@@ -108,14 +108,6 @@ function handleRoute() {
   const path =
     (location.hash.startsWith("#/") ? location.hash.slice(2) : "") || "home";
 
-  // Para rutas dinámicas tipo list/:id
-  const listMatch = path.match(/^list\/(.+)$/);
-  if (listMatch) {
-    const listId = listMatch[1]; // capturamos el id
-    loadView("board").then(() => initBoard(listId));
-    return;
-  }
-
   const known = [
     "home",
     "login",
@@ -125,7 +117,7 @@ function handleRoute() {
     "ongoing",
     "unassigned",
     "completed",
-    "board",
+    "dashboard",
     "create-task",
     "create-list",
   ];
@@ -153,8 +145,9 @@ async function initHome() {
 }
 
 async function initCreateTask() {
-  const activeListId = localStorage.getItem("activeListId");
+  const list = localStorage.getItem("activeListId");
   const form = document.getElementById("taskForm");
+
   if (!form) return;
 
   form.addEventListener("submit", async (e) => {
@@ -170,7 +163,7 @@ async function initCreateTask() {
       description: form["task-desc"].value.trim(),
       status: form["task-status"].value,
       dueDate: `${date}T${time}:00`,
-      activeListId,
+      list,
     };
 
     try {
@@ -180,7 +173,7 @@ async function initCreateTask() {
 
       // Llamada al servicio
       const result = await createTask(data, token, userId);
-
+      console.log("holaaa");
       console.log("Task creada:", result);
       alert("Tarea creada exitosamente 🎉");
       form.reset(); // limpiar campos después de enviar
@@ -453,8 +446,7 @@ function initDashboard(listId = null) {
     const dynamicUl = document.getElementById("dynamic-ul");
 
     try {
-      const response = await getUserLists(token, userId);
-      const lists = Array.isArray(response) ? response : response?.lists || [];
+      const lists = await getUserLists(token, userId);
 
       dynamicUl.innerHTML = ""; // limpiamos antes de agregar
 
@@ -496,8 +488,13 @@ function initDashboard(listId = null) {
     const tasksGrid = document.querySelector(".tasks-grid");
 
     try {
+<<<<<<< HEAD
+      const tasks = await getListTasks(listId, token);
+      console.log(tasks);
+=======
       const response = await getListTasks(listId, token, userId);
       const tasks = Array.isArray(response) ? response : response?.tasks || [];
+>>>>>>> origin/main
 
       if (!tasksGrid) return;
       tasksGrid.innerHTML = "";

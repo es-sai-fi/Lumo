@@ -6,7 +6,9 @@ class TaskController extends GlobalController {
   // Create a new task
   async createTask(req, res) {
     try {
-      const { title, description, status = "Unassigned", dueDate, user, list } = req.body;
+      const { title, status, dueDate, user, list } = req.body;
+
+      const onlyList = await List.findById(list).lean();
 
       if (!title || !user) {
         return res.status(400).json({
