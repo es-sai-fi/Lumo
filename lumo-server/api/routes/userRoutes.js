@@ -55,6 +55,8 @@ router.delete("/:id", (req, res) => UserController.delete(req, res));
 router.post("/login", (req, res) => UserController.login(req, res));
 
 /**
+<<<<<<< HEAD
+=======
  * @route POST /users/forgot-password
  * @description Send a password reset link to user's email.
  * @body {string} email - The user's email.
@@ -79,6 +81,7 @@ router.post("/reset-password/:token", (req, res) =>
 
 
 /**
+>>>>>>> main
  * Export the router instance to be mounted in the main routes file.
  */
 module.exports = router;
