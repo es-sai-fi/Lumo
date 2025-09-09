@@ -22,15 +22,28 @@ export async function createTask(
   token,
   user,
 ) {
+  // Map client statuses to server enum values
+  const statusMap = {
+    unassigned: "Unassigned",
+    ongoing: "On going",
+    completed: "Done",
+  };
+  const mappedStatus = statusMap[status] || undefined; // let backend default if undefined
+
   return http.post(
     "/api/v1/tasks",
     {
       title,
       description,
-      status,
+      status: mappedStatus,
       dueDate,
+<<<<<<< HEAD
       user,
       list,
+=======
+      user: userId,
+      list: activeListId,
+>>>>>>> origin/main
     },
     {
       headers: {
@@ -59,7 +72,7 @@ export async function createList({ title }, token, userId) {
     "/api/v1/lists",
     {
       title,
-      userId,
+      user: userId,
     },
     {
       headers: {
@@ -84,7 +97,11 @@ export async function createList({ title }, token, userId) {
  * @throws {Error} If the API responds with an error status or message.
  */
 export async function getUserLists(token, userId) {
+<<<<<<< HEAD
   return http.get(`/api/v1/lists/${userId}`, {
+=======
+  return http.get(`/api/v1/lists?user=${encodeURIComponent(userId)}`, {
+>>>>>>> origin/main
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -121,7 +138,5 @@ export async function loginUser({ email, password }) {
 }
 
 export async function getUserProfileInfo({ email }) {
-  return http.get("no sé", {
-    email,
-  });
+  return http.get("/api/v1/users/profile?email=" + encodeURIComponent(email));
 }
