@@ -3,6 +3,11 @@ import {
   loginUser,
   getUserProfileInfo,
 } from "../services/userService.js";
+import {
+  createTask,
+  createList,
+  getUserLists,
+} from "../services/taskListService.js";
 
 const app = document.getElementById("app");
 
@@ -36,8 +41,7 @@ const viewStyleMap = {
   unassigned: "dashboard",
   completed: "dashboard",
   "create-task": "dashboard",
-  "create-list": "dashboard"
-
+  "create-list": "dashboard",
 };
 
 /**
@@ -61,9 +65,10 @@ async function loadView(name) {
     loadViewCSS(styleURL(cssFileName));
   }
 
+  if (name === "home") initHome();
   if (name === "register") initRegister();
   if (name === "login") initLogin();
-  if (name === "board") initBoard();
+  if (name === "Dashboard") initDashboard();
   // if (name === "profile") initProfile();
 }
 
@@ -100,8 +105,27 @@ export function initRouter() {
 function handleRoute() {
   const path =
     (location.hash.startsWith("#/") ? location.hash.slice(2) : "") || "home";
-  const known = ["home", "login", "register", "password-recovery", "dashboard", "ongoing", "unassigned", "completed", "board",
-    "create-task", "create-list"
+
+  // Para rutas dinámicas tipo list/:id
+  const listMatch = path.match(/^list\/(.+)$/);
+  if (listMatch) {
+    const listId = listMatch[1]; // capturamos el id
+    loadView("board").then(() => initBoard(listId));
+    return;
+  }
+
+  const known = [
+    "home",
+    "login",
+    "register",
+    "password-recovery",
+    "dashboard",
+    "ongoing",
+    "unassigned",
+    "completed",
+    "board",
+    "create-task",
+    "create-list",
   ];
   const route = known.includes(path) ? path : "home";
 
@@ -112,6 +136,87 @@ function handleRoute() {
 }
 
 /* ---- View-specific logic ---- */
+
+/**
+ * Initialize the "home" view.
+ * Disables loguin button if the user is already logged in.
+ */
+async function initHome() {
+  const loginBtn = document.getElementById("login-button");
+  const token = localStorage.getItem("token");
+
+  if (token) {
+    loginBtn.hidden = true;
+  }
+}
+
+async function initCreateTask() {
+  localStorage.getItem("activeListId", activeListId);
+  const form = document.getElementById("taskForm");
+  if (!form) return;
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    // Captura de fecha y hora
+    const date = form["task-date"].value;
+    const time = form["task-time"].value;
+
+    // Construcción del objeto de tarea
+    const data = {
+      title: form["task-title"].value.trim(),
+      description: form["task-desc"].value.trim(),
+      status: form["task-status"].value,
+      dueDate: `${date}T${time}:00`,
+      activeListId,
+    };
+
+    try {
+      const token = localStorage.getItem("token");
+      const userId = localStorage.getItem("userId");
+      if (!token) throw new Error("Usuario no autenticado.");
+
+      // Llamada al servicio
+      const result = await createTask(data, token, userId);
+
+      console.log("Task creada:", result);
+      alert("Tarea creada exitosamente 🎉");
+      form.reset(); // limpiar campos después de enviar
+    } catch (err) {
+      console.error("Error creando tarea:", err.message);
+      alert(`Error creando tarea: ${err.message}`);
+    }
+  });
+}
+
+async function initCreateList() {
+  const form = document.getElementById("listForm");
+  if (!form) return;
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const data = {
+      title: form["list-title"].value.trim(),
+    };
+
+    try {
+      const token = localStorage.getItem("token");
+      const userId = localStorage.getItem("userId");
+      if (!token) throw new Error("Usuario no autenticado.");
+
+      // Llamada al servicio
+      const result = await createList(data, token, userId);
+
+      console.log("List creada:", result);
+      alert("Tarea creada exitosamente 🎉");
+      form.reset();
+    } catch (err) {
+      console.error("Error creando lista:", err.message);
+      alert(`Error creando lista: ${err.message}`);
+    }
+  });
+}
 
 /**
  * Initialize the "profile" view.
@@ -150,31 +255,36 @@ function initRegister() {
   if (!form) return;
 
   // Agarra el evento invalid para cambiar el mensaje de html y hacer uno propio
-  form.addEventListener("invalid", (e) => {
-    const input = e.target;
-    // Password validation logic.
-    if (input.name === "password") {
-      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
-      if (!passwordRegex.test(input.value)) {
-        input.setCustomValidity(
-          "The password must be at least 8 characters and include an uppercase letter, lowercase letter, number and a special character."
-        );
-      } else {
-        input.setCustomValidity("");
+  form.addEventListener(
+    "invalid",
+    (e) => {
+      const input = e.target;
+      // Password validation logic.
+      if (input.name === "password") {
+        const passwordRegex =
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+        if (!passwordRegex.test(input.value)) {
+          input.setCustomValidity(
+            "The password must be at least 8 characters and include an uppercase letter, lowercase letter, number and a special character.",
+          );
+        } else {
+          input.setCustomValidity("");
+        }
       }
-    }
-    // logica del email
-    if (input.name === "email") {
+      // logica del email
+      if (input.name === "email") {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (!emailRegex.test(input.value)) {
-            input.setCustomValidity(
-                "Please enter a valid email address (e.g., user@domain.com)."
-            );
+          input.setCustomValidity(
+            "Please enter a valid email address (e.g., user@domain.com).",
+          );
         } else {
-            input.setCustomValidity("");
+          input.setCustomValidity("");
         }
-    }
-  }, true);
+      }
+    },
+    true,
+  );
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -193,7 +303,7 @@ function initRegister() {
     const formButton = form.querySelector('button[type="submit"]');
 
     try {
-      // 
+      //
       if (data.password !== data.confirmPassword) {
         throw new Error("Passwords do not match.");
       }
@@ -227,119 +337,240 @@ function initRegister() {
 }
 
 function initLogin() {
-    const form = document.getElementById("loginForm");
-    const msg = document.getElementById("message");
+  const form = document.getElementById("loginForm");
+  const msg = document.getElementById("message");
 
-    if (!form) return;
+  if (!form) return;
 
-    // Listens for the 'invalid' event to customize validation messages.
-    form.addEventListener("invalid", (e) => {
-        const input = e.target;
+  // Listens for the 'invalid' event to customize validation messages.
+  form.addEventListener(
+    "invalid",
+    (e) => {
+      const input = e.target;
 
-        switch (input.name) {
-            case "email":
-                if (input.validity.valueMissing) {
-                    input.setCustomValidity("Email is a required field.");
-                } else if (input.validity.typeMismatch) {
-                    input.setCustomValidity("Please enter a valid email address (e.g., user@domain.com).");
-                } else {
-                    input.setCustomValidity(""); // Clears the custom error message if valid.
-                }
-                break;
-            case "password":
-                if (input.validity.valueMissing) {
-                    input.setCustomValidity("Password is a required field.");
-                } else {
-                    input.setCustomValidity("");
-                }
-                break;
-            default:
-                // Clears any other custom validation messages.
-                input.setCustomValidity("");
-                break;
-        }
-    }, true);
+      switch (input.name) {
+        case "email":
+          if (input.validity.valueMissing) {
+            input.setCustomValidity("Email is a required field.");
+          } else if (input.validity.typeMismatch) {
+            input.setCustomValidity(
+              "Please enter a valid email address (e.g., user@domain.com).",
+            );
+          } else {
+            input.setCustomValidity(""); // Clears the custom error message if valid.
+          }
+          break;
+        case "password":
+          if (input.validity.valueMissing) {
+            input.setCustomValidity("Password is a required field.");
+          } else {
+            input.setCustomValidity("");
+          }
+          break;
+        default:
+          // Clears any other custom validation messages.
+          input.setCustomValidity("");
+          break;
+      }
+    },
+    true,
+  );
 
-    // Function that handles login and saves the token
-    async function handleLogin(data) {
-        const formButton = form.querySelector('button[type="submit"]');
-        try {
-            const response = await loginUser(data); // loginUser from userService.js
-            const token = response.token; // assuming the backend returns { token }
+  // Function that handles login and saves the token
+  async function handleLogin(data) {
+    const formButton = form.querySelector('button[type="submit"]');
 
-            localStorage.setItem("token", token);
+    try {
+      const response = await loginUser(data); // loginUser from userService.js
+      const token = response.token; // assuming the backend returns { token }
+      const userId = response.userId;
 
-            msg.textContent = "You have successfully logged in! 🎉";
-            msg.style.color = "green";
-            msg.hidden = false;
-            form.reset();
+      localStorage.setItem("token", token);
+      localStorage.setItem("userId", userId);
 
-            setTimeout(() => {
-                location.hash = "#/board";
-            }, 400);
-        } catch (err) {
-            // Handles login API errors
-            msg.textContent = `Could not log in: ${err.message}`;
-            msg.hidden = false;
-        } finally {
-            formButton.disabled = false;
-        }
+      msg.textContent = "You have successfully logged in! 🎉";
+      msg.style.color = "green";
+      msg.hidden = false;
+      form.reset();
+
+      setTimeout(() => {
+        location.hash = "#/dashboard";
+      }, 400);
+    } catch (err) {
+      // Handles login API errors
+      msg.textContent = `Could not log in: ${err.message}`;
+      msg.hidden = false;
+    } finally {
+      formButton.disabled = false;
+    }
+  }
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    msg.textContent = "";
+
+    const data = {
+      email: form.email.value.trim(),
+      password: form.password.value.trim(),
+    };
+
+    // Use checkValidity() to trigger native validation and 'invalid' events.
+    if (!form.checkValidity()) {
+      return;
     }
 
-    form.addEventListener("submit", (e) => {
-        e.preventDefault();
-        msg.textContent = "";
-
-        const data = {
-            email: form.email.value.trim(),
-            password: form.password.value.trim(),
-        };
-
-        // Use checkValidity() to trigger native validation and 'invalid' events.
-        if (!form.checkValidity()) {
-            return;
-        }
-
-        form.querySelector('button[type="submit"]').disabled = true;
-        handleLogin(data);
-    });
+    form.querySelector('button[type="submit"]').disabled = true;
+    handleLogin(data);
+  });
 }
 
 /**
  * Initialize the "board" view.
  * Sets up the todo form, input, and list with create/remove/toggle logic.
  */
-function initBoard() {
-  const form = document.getElementById("todoForm");
-  const input = document.getElementById("newTodo");
-  const list = document.getElementById("todoList");
-  if (!form || !input || !list) return;
+function initDashboard(listId = null) {
+  /**
+   * Deletes the JWT token in the local storage and redirects user to home.
+   */
+  function handleLogout() {
+    localStorage.removeItem("token");
+    location.hash = "#/home";
+  }
 
-  // Add new todo item
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const title = input.value.trim();
-    if (!title) return;
+  /**
+   * Retrieves all the user associated lists and inserts them into
+   * "dynamic-ul" then adds an event for each of them.
+   *
+   * @async
+   * @function handleGetUserLists
+   * @throws {Error} Throws an error if fetching lists fails.
+   */
+  async function handleGetUserLists() {
+    const dynamicUl = document.getElementById("dynamic-ul");
 
-    const li = document.createElement("li");
-    li.className = "todo";
-    li.innerHTML = `
-      <label>
-        <input type="checkbox" class="check">
-        <span>${title}</span>
-      </label>
-      <button class="link remove" type="button">Eliminar</button>
-    `;
-    list.prepend(li);
-    input.value = "";
-  });
+    try {
+      const response = await getUserLists(token, userId);
+      const lists = response.lists; // depende si usas axios o fetch, ajusta
 
-  // Handle remove and toggle completion
-  list.addEventListener("click", (e) => {
-    const li = e.target.closest(".todo");
-    if (!li) return;
-    if (e.target.matches(".remove")) li.remove();
-    if (e.target.matches(".check"))
-      li.classList.toggle("completed", e.target.checked);
-  });
+      dynamicUl.innerHTML = ""; // limpiamos antes de agregar
+
+      lists.forEach((list) => {
+        const li = document.createElement("li");
+
+        li.textContent = list.title;
+        li.style.cursor = "pointer"; // que parezca clickable
+        li.addEventListener("click", () => {
+          localStorage.setItem("activeListId", list._id);
+          handleGetListTasks(list._id);
+        });
+
+        dynamicUl.appendChild(li);
+      });
+    } catch (err) {
+      console.error("Error loading user lists:", err.message);
+    }
+  }
+
+  /**
+   * Fetches all tasks associated with a given list and renders them
+   * dynamically into the DOM element with id "tasks-grid".
+   *
+   * @async
+   * @function handleGetListTasks
+   * @param {string} listId - The unique identifier of the list whose tasks will be fetched.
+   * @throws {Error} Throws an error if fetching tasks fails.
+   */
+  async function handleGetListTasks(listId) {
+    const tasksGrid = document.getElementById("tasks-grid");
+
+    try {
+      const response = await getListTasks(listId, token, userId);
+      const tasks = response.taks;
+
+      tasksGrid.innerHTML = "";
+
+      tasks.forEach((task) => {
+        const card = document.createElement("div");
+        card.className = "task-card";
+
+        // Encabezado
+        const header = document.createElement("div");
+        header.className = "task-header";
+
+        const h3 = document.createElement("h3");
+
+        // Circle con color según status
+        const circle = document.createElement("span");
+        circle.className = "circle";
+        switch (task.status) {
+          case "unassigned":
+            circle.classList.add("gray");
+            break;
+          case "ongoing":
+            circle.classList.add("yellow");
+            break;
+          case "completed":
+            circle.classList.add("green");
+            break;
+          default:
+            circle.classList.add("gray");
+        }
+
+        h3.appendChild(circle);
+        h3.appendChild(document.createTextNode(` ${task.title}`));
+        header.appendChild(h3);
+
+        // Botones
+        const actions = document.createElement("div");
+        actions.className = "task-actions";
+
+        const editBtn = document.createElement("button");
+        editBtn.className = "edit-btn";
+        editBtn.textContent = "✎";
+        // agregar listener si quieres editar
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className = "delete-btn";
+        deleteBtn.textContent = "🗑️";
+        // agregar listener si quieres eliminar
+
+        actions.appendChild(editBtn);
+        actions.appendChild(deleteBtn);
+        header.appendChild(actions);
+
+        // Descripción
+        const desc = document.createElement("p");
+        desc.textContent = task.description || "";
+
+        // Footer con dueDate
+        const footer = document.createElement("div");
+        footer.className = "task-footer";
+
+        const due = document.createElement("span");
+        due.className = "due-date";
+        due.textContent = `🗓️ ${task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "N/A"}`;
+
+        footer.appendChild(due);
+
+        // Armar card
+        card.appendChild(header);
+        card.appendChild(desc);
+        card.appendChild(footer);
+
+        tasksGrid.appendChild(card);
+      });
+    } catch (err) {
+      console.error("Error loading list tasks:", err.message);
+    }
+  }
+
+  const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("userId");
+
+  if (!token || !userId) {
+    console.error("Usuario no autenticado.");
+    location.hash = "#/login";
+  }
+
+  handleGetUserLists();
 }
