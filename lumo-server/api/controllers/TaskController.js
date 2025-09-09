@@ -6,7 +6,7 @@ class TaskController extends GlobalController {
   // Create a new task
   async createTask(req, res) {
     try {
-      const { title, status = "Unassigned", dueDate, user, list } = req.body;
+      const { title, description, status = "Unassigned", dueDate, user, list } = req.body;
 
       if (!title || !user) {
         return res.status(400).json({
@@ -24,6 +24,7 @@ class TaskController extends GlobalController {
 
       const task = await Task.create({
         title,
+        description,
         status,
         dueDate,
         user,

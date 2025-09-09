@@ -7,6 +7,7 @@ import {
   createTask,
   createList,
   getUserLists,
+  getListTasks,
 } from "../services/taskListService.js";
 
 const app = document.getElementById("app");
@@ -68,7 +69,8 @@ async function loadView(name) {
   if (name === "home") initHome();
   if (name === "register") initRegister();
   if (name === "login") initLogin();
-  if (name === "Dashboard") initDashboard();
+  if (name === "dashboard") initDashboard();
+  if (name === "create-task") initCreateTask();
   // if (name === "profile") initProfile();
 }
 
@@ -151,7 +153,7 @@ async function initHome() {
 }
 
 async function initCreateTask() {
-  localStorage.getItem("activeListId", activeListId);
+  const activeListId = localStorage.getItem("activeListId");
   const form = document.getElementById("taskForm");
   if (!form) return;
 
@@ -182,6 +184,8 @@ async function initCreateTask() {
       console.log("Task creada:", result);
       alert("Tarea creada exitosamente 🎉");
       form.reset(); // limpiar campos después de enviar
+      // Regresar al dashboard y refrescará automáticamente
+      location.hash = "#/dashboard";
     } catch (err) {
       console.error("Error creando tarea:", err.message);
       alert(`Error creando tarea: ${err.message}`);
@@ -450,7 +454,7 @@ function initDashboard(listId = null) {
 
     try {
       const response = await getUserLists(token, userId);
-      const lists = response.lists; // depende si usas axios o fetch, ajusta
+      const lists = Array.isArray(response) ? response : response?.lists || [];
 
       dynamicUl.innerHTML = ""; // limpiamos antes de agregar
 
@@ -466,6 +470,14 @@ function initDashboard(listId = null) {
 
         dynamicUl.appendChild(li);
       });
+
+      // Auto-selecciona la lista por defecto "Tasks" o la primera disponible
+      const preferred =
+        lists.find((l) => l.title === "Tasks") || (lists.length ? lists[0] : null);
+      if (preferred) {
+        localStorage.setItem("activeListId", preferred._id);
+        handleGetListTasks(preferred._id);
+      }
     } catch (err) {
       console.error("Error loading user lists:", err.message);
     }
@@ -481,12 +493,13 @@ function initDashboard(listId = null) {
    * @throws {Error} Throws an error if fetching tasks fails.
    */
   async function handleGetListTasks(listId) {
-    const tasksGrid = document.getElementById("tasks-grid");
+    const tasksGrid = document.querySelector(".tasks-grid");
 
     try {
       const response = await getListTasks(listId, token, userId);
-      const tasks = response.taks;
+      const tasks = Array.isArray(response) ? response : response?.tasks || [];
 
+      if (!tasksGrid) return;
       tasksGrid.innerHTML = "";
 
       tasks.forEach((task) => {
@@ -502,14 +515,15 @@ function initDashboard(listId = null) {
         // Circle con color según status
         const circle = document.createElement("span");
         circle.className = "circle";
+        // Mapear estados del backend a colores
         switch (task.status) {
-          case "unassigned":
+          case "Unassigned":
             circle.classList.add("gray");
             break;
-          case "ongoing":
+          case "On going":
             circle.classList.add("yellow");
             break;
-          case "completed":
+          case "Done":
             circle.classList.add("green");
             break;
           default:
