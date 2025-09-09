@@ -1,14 +1,12 @@
 const GlobalController = require("./GlobalController");
-const Task = require("../models/Tasks");
-const List = require("../models/List");
+const ListDAO = require("../dao/ListDAO");
+const TaskDAO = require("../dao/TaskDAO");
 
 class TaskController extends GlobalController {
   // Create a new task
   async createTask(req, res) {
     try {
-      const { title, status, dueDate, user, list } = req.body;
-
-      const onlyList = await List.findById(list).lean();
+      const { title, description, status, dueDate, user, list } = req.body;
 
       if (!title || !user) {
         return res.status(400).json({
@@ -17,14 +15,14 @@ class TaskController extends GlobalController {
       }
 
       // Validate list exists and belongs to user
-      const listExists = await List.findOne({ _id: list, user });
+      const listExists = await ListDAO.findOne({ _id: list, user });
       if (!listExists) {
         return res.status(400).json({
           message: "List not found or does not belong to user.",
         });
       }
 
-      const task = await Task.create({
+      const task = await TaskDAO.create({
         title,
         description,
         status,
@@ -42,28 +40,6 @@ class TaskController extends GlobalController {
     }
   }
 
-  // Get all tasks (optionally filtered by list)
-  async getAllTasks(req, res) {
-    try {
-      const { user, list, status } = req.query;
-      const filter = { user };
-
-      if (list) filter.list = list;
-      if (status) filter.status = status;
-
-      const tasks = await Task.find(filter)
-        .sort({ dueDate: 1, createdAt: -1 })
-        .populate("list", "title");
-
-      res.status(200).json(tasks);
-    } catch (error) {
-      console.error("Error getting tasks:", error);
-      res.status(500).json({
-        message: "Internal server error, try again later",
-      });
-    }
-  }
-
   // Update a task
   async updateTask(req, res) {
     try {
@@ -71,14 +47,14 @@ class TaskController extends GlobalController {
       const { title, status, dueDate, list } = req.body;
       const userId = req.body.user; // Assuming user ID is passed in the request
 
-      const task = await Task.findOne({ _id: id, user: userId });
+      const task = await TaskDAO.findOne({ _id: id, user: userId });
       if (!task) {
         return res.status(404).json({ message: "Task not found" });
       }
 
       // If changing lists, verify the new list exists and belongs to the user
       if (list && list !== task.list.toString()) {
-        const listExists = await List.findOne({ _id: list, user: userId });
+        const listExists = await ListDAO.findOne({ _id: list, user: userId });
         if (!listExists) {
           return res.status(400).json({
             message: "List not found or does not belong to user.",

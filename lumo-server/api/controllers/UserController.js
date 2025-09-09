@@ -3,7 +3,6 @@ const UserDAO = require("../dao/UserDAO");
 const ListController = require("./ListController");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-
 const { sendMail } = require("../utils/mailer");
 
 /**
@@ -100,7 +99,7 @@ class UserController extends GlobalController {
 
       // Ensure the user has a default "Tasks" list (idempotent)
       try {
-        const existingDefault = await List.findOne({
+        const existingDefault = await ListController.dao.findOne({
           user: user._id,
           title: "Tasks",
         });
