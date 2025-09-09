@@ -39,7 +39,7 @@ const viewStyleMap = {
   board: "board",
   profile: "profile",
   dashboard: "dashboard",
-  "create-task": "dashboard",
+  "create-task": "create-task",
   "create-list": "dashboard",
 };
 
@@ -486,7 +486,10 @@ function initDashboard(listId = null) {
       lists.forEach((list) => {
         const li = document.createElement("li");
 
-        li.textContent = list.title;
+        const listTitle = list.title;
+
+        localStorage.setItem("activeListTitle", listTitle);
+        li.textContent = listTitle;
 
         li.addEventListener("click", () => {
           localStorage.setItem("activeListId", list._id);
@@ -521,13 +524,22 @@ function initDashboard(listId = null) {
    */
   async function handleGetListTasks(listId) {
     const tasksGrid = document.querySelector(".tasks-grid");
+    const listHeader = document.querySelector(".list-header");
 
     try {
       const tasks = await getListTasks(listId, token);
-
-      if (!tasksGrid) return;
       tasksGrid.innerHTML = "";
 
+      // Would probably have to change this later.
+      // List header data.
+      listHeader.innerHTML = `
+        <h2>${localStorage.getItem("activeListTitle")}</h2>
+        <button class="add-task-btn">
+            <a href="#/create-task" style="color: inherit; text-decoration: none">+</a>
+        </button>
+      `;
+
+      // Task grid data.
       tasks.forEach((task) => {
         const card = document.createElement("div");
         card.className = "task-card";
