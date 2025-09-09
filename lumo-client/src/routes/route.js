@@ -3,6 +3,11 @@ import {
   loginUser,
   getUserProfileInfo,
 } from "../services/userService.js";
+import {
+  createTask,
+  createList,
+  getUserLists,
+} from "../services/taskListService.js";
 
 const app = document.getElementById("app");
 
@@ -36,8 +41,7 @@ const viewStyleMap = {
   unassigned: "dashboard",
   completed: "dashboard",
   "create-task": "dashboard",
-  "create-list": "dashboard"
-
+  "create-list": "dashboard",
 };
 
 /**
@@ -64,7 +68,7 @@ async function loadView(name) {
   if (name === "home") initHome();
   if (name === "register") initRegister();
   if (name === "login") initLogin();
-  if (name === "board") initBoard();
+  if (name === "Dashboard") initDashboard();
   // if (name === "profile") initProfile();
 }
 
@@ -101,8 +105,27 @@ export function initRouter() {
 function handleRoute() {
   const path =
     (location.hash.startsWith("#/") ? location.hash.slice(2) : "") || "home";
-  const known = ["home", "login", "register", "password-recovery", "dashboard", "ongoing", "unassigned", "completed", "board",
-    "create-task", "create-list"
+
+  // Para rutas dinámicas tipo list/:id
+  const listMatch = path.match(/^list\/(.+)$/);
+  if (listMatch) {
+    const listId = listMatch[1]; // capturamos el id
+    loadView("board").then(() => initBoard(listId));
+    return;
+  }
+
+  const known = [
+    "home",
+    "login",
+    "register",
+    "password-recovery",
+    "dashboard",
+    "ongoing",
+    "unassigned",
+    "completed",
+    "board",
+    "create-task",
+    "create-list",
   ];
   const route = known.includes(path) ? path : "home";
 
@@ -120,13 +143,79 @@ function handleRoute() {
  */
 async function initHome() {
   const loginBtn = document.getElementById("login-button");
-  if (!loginBtn) return;
-
   const token = localStorage.getItem("token");
 
   if (token) {
     loginBtn.hidden = true;
   }
+}
+
+async function initCreateTask() {
+  localStorage.getItem("activeListId", activeListId);
+  const form = document.getElementById("taskForm");
+  if (!form) return;
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    // Captura de fecha y hora
+    const date = form["task-date"].value;
+    const time = form["task-time"].value;
+
+    // Construcción del objeto de tarea
+    const data = {
+      title: form["task-title"].value.trim(),
+      description: form["task-desc"].value.trim(),
+      status: form["task-status"].value,
+      dueDate: `${date}T${time}:00`,
+      activeListId,
+    };
+
+    try {
+      const token = localStorage.getItem("token");
+      const userId = localStorage.getItem("userId");
+      if (!token) throw new Error("Usuario no autenticado.");
+
+      // Llamada al servicio
+      const result = await createTask(data, token, userId);
+
+      console.log("Task creada:", result);
+      alert("Tarea creada exitosamente 🎉");
+      form.reset(); // limpiar campos después de enviar
+    } catch (err) {
+      console.error("Error creando tarea:", err.message);
+      alert(`Error creando tarea: ${err.message}`);
+    }
+  });
+}
+
+async function initCreateList() {
+  const form = document.getElementById("listForm");
+  if (!form) return;
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const data = {
+      title: form["list-title"].value.trim(),
+    };
+
+    try {
+      const token = localStorage.getItem("token");
+      const userId = localStorage.getItem("userId");
+      if (!token) throw new Error("Usuario no autenticado.");
+
+      // Llamada al servicio
+      const result = await createList(data, token, userId);
+
+      console.log("List creada:", result);
+      alert("Tarea creada exitosamente 🎉");
+      form.reset();
+    } catch (err) {
+      console.error("Error creando lista:", err.message);
+      alert(`Error creando lista: ${err.message}`);
+    }
+  });
 }
 
 /**
@@ -290,11 +379,14 @@ function initLogin() {
   // Function that handles login and saves the token
   async function handleLogin(data) {
     const formButton = form.querySelector('button[type="submit"]');
+
     try {
       const response = await loginUser(data); // loginUser from userService.js
       const token = response.token; // assuming the backend returns { token }
+      const userId = response.userId;
 
       localStorage.setItem("token", token);
+      localStorage.setItem("userId", userId);
 
       msg.textContent = "You have successfully logged in! 🎉";
       msg.style.color = "green";
@@ -336,7 +428,7 @@ function initLogin() {
  * Initialize the "board" view.
  * Sets up the todo form, input, and list with create/remove/toggle logic.
  */
-function initBoard() {
+function initDashboard(listId = null) {
   /**
    * Deletes the JWT token in the local storage and redirects user to home.
    */
@@ -345,36 +437,140 @@ function initBoard() {
     location.hash = "#/home";
   }
 
-  const form = document.getElementById("todoForm");
-  const input = document.getElementById("newTodo");
-  const list = document.getElementById("todoList");
-  if (!form || !input || !list) return;
+  /**
+   * Retrieves all the user associated lists and inserts them into
+   * "dynamic-ul" then adds an event for each of them.
+   *
+   * @async
+   * @function handleGetUserLists
+   * @throws {Error} Throws an error if fetching lists fails.
+   */
+  async function handleGetUserLists() {
+    const dynamicUl = document.getElementById("dynamic-ul");
 
-  // Add new todo item
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const title = input.value.trim();
-    if (!title) return;
+    try {
+      const response = await getUserLists(token, userId);
+      const lists = response.lists; // depende si usas axios o fetch, ajusta
 
-    const li = document.createElement("li");
-    li.className = "todo";
-    li.innerHTML = `
-      <label>
-        <input type="checkbox" class="check">
-        <span>${title}</span>
-      </label>
-      <button class="link remove" type="button">Eliminar</button>
-    `;
-    list.prepend(li);
-    input.value = "";
-  });
+      dynamicUl.innerHTML = ""; // limpiamos antes de agregar
 
-  // Handle remove and toggle completion
-  list.addEventListener("click", (e) => {
-    const li = e.target.closest(".todo");
-    if (!li) return;
-    if (e.target.matches(".remove")) li.remove();
-    if (e.target.matches(".check"))
-      li.classList.toggle("completed", e.target.checked);
-  });
+      lists.forEach((list) => {
+        const li = document.createElement("li");
+
+        li.textContent = list.title;
+        li.style.cursor = "pointer"; // que parezca clickable
+        li.addEventListener("click", () => {
+          localStorage.setItem("activeListId", list._id);
+          handleGetListTasks(list._id);
+        });
+
+        dynamicUl.appendChild(li);
+      });
+    } catch (err) {
+      console.error("Error loading user lists:", err.message);
+    }
+  }
+
+  /**
+   * Fetches all tasks associated with a given list and renders them
+   * dynamically into the DOM element with id "tasks-grid".
+   *
+   * @async
+   * @function handleGetListTasks
+   * @param {string} listId - The unique identifier of the list whose tasks will be fetched.
+   * @throws {Error} Throws an error if fetching tasks fails.
+   */
+  async function handleGetListTasks(listId) {
+    const tasksGrid = document.getElementById("tasks-grid");
+
+    try {
+      const response = await getListTasks(listId, token, userId);
+      const tasks = response.taks;
+
+      tasksGrid.innerHTML = "";
+
+      tasks.forEach((task) => {
+        const card = document.createElement("div");
+        card.className = "task-card";
+
+        // Encabezado
+        const header = document.createElement("div");
+        header.className = "task-header";
+
+        const h3 = document.createElement("h3");
+
+        // Circle con color según status
+        const circle = document.createElement("span");
+        circle.className = "circle";
+        switch (task.status) {
+          case "unassigned":
+            circle.classList.add("gray");
+            break;
+          case "ongoing":
+            circle.classList.add("yellow");
+            break;
+          case "completed":
+            circle.classList.add("green");
+            break;
+          default:
+            circle.classList.add("gray");
+        }
+
+        h3.appendChild(circle);
+        h3.appendChild(document.createTextNode(` ${task.title}`));
+        header.appendChild(h3);
+
+        // Botones
+        const actions = document.createElement("div");
+        actions.className = "task-actions";
+
+        const editBtn = document.createElement("button");
+        editBtn.className = "edit-btn";
+        editBtn.textContent = "✎";
+        // agregar listener si quieres editar
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className = "delete-btn";
+        deleteBtn.textContent = "🗑️";
+        // agregar listener si quieres eliminar
+
+        actions.appendChild(editBtn);
+        actions.appendChild(deleteBtn);
+        header.appendChild(actions);
+
+        // Descripción
+        const desc = document.createElement("p");
+        desc.textContent = task.description || "";
+
+        // Footer con dueDate
+        const footer = document.createElement("div");
+        footer.className = "task-footer";
+
+        const due = document.createElement("span");
+        due.className = "due-date";
+        due.textContent = `🗓️ ${task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "N/A"}`;
+
+        footer.appendChild(due);
+
+        // Armar card
+        card.appendChild(header);
+        card.appendChild(desc);
+        card.appendChild(footer);
+
+        tasksGrid.appendChild(card);
+      });
+    } catch (err) {
+      console.error("Error loading list tasks:", err.message);
+    }
+  }
+
+  const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("userId");
+
+  if (!token || !userId) {
+    console.error("Usuario no autenticado.");
+    location.hash = "#/login";
+  }
+
+  handleGetUserLists();
 }

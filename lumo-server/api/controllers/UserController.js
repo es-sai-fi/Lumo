@@ -95,7 +95,7 @@ class UserController extends GlobalController {
         expiresIn: "1h",
       });
 
-      res.json({ token });
+      res.json({ token, userId: user._id });
     } catch (error) {
       if (process.env.NODE_ENV === "development") {
         console.log(`Internal server error: ${error.message}`);
