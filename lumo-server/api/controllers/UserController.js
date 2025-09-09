@@ -37,7 +37,7 @@ class UserController extends GlobalController {
     try {
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      const existingUser = await this.dao.model.findOne({ email });
+      const existingUser = await this.dao.findOne({ email });
       if (existingUser) {
         console.log(
           `Registration rejected 409 Conflict: email already registered (${email})`,
@@ -52,9 +52,15 @@ class UserController extends GlobalController {
         email,
         password: hashedPassword,
       });
-      res.status(201).json(user);
+
+      res.status(201).json({ id: user._id });
     } catch (error) {
-      res.status(400).json({ message: error.message });
+      if (process.env.NODE_ENV === "development") {
+        console.log(`Internal server error: ${error.message}`);
+      }
+      res
+        .status(500)
+        .json({ message: "Internal server error, try again later" });
     }
   }
 
@@ -91,7 +97,12 @@ class UserController extends GlobalController {
 
       res.json({ token });
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      if (process.env.NODE_ENV === "development") {
+        console.log(`Internal server error: ${error.message}`);
+      }
+      res
+        .status(500)
+        .json({ message: "Internal server error, try again later" });
     }
   }
 }

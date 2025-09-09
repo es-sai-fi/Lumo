@@ -2,10 +2,18 @@ const express = require('express');
 const router = express.Router();
 const ListController = require('../controllers/ListController');
 
-// POST /api/lists - Create a new list
-router.post('/', ListController.createList);
+/**
+ * @route POST /lists
+ * @description Create a new list
+ * @access Public
+ */
+router.post("/", (req, res) => new ListController().createList(req, res));
 
-// GET /api/lists?user=USER_ID - Get all lists for a user
-router.get('/', ListController.getListsByUser);
+/**
+ * @route GET /lists
+ * @description Get all lists for a user
+ * @access Public
+ */
+router.get("/", (req, res) => new ListController().getListsByUser(req, res));
 
-module.exports = router;
+module.exports = router;
