@@ -56,6 +56,7 @@ async function loadView(name) {
     loadViewCSS(styleURL(cssFileName));
   }
 
+  if (name === "home") initHome();
   if (name === "register") initRegister();
   if (name === "login") initLogin();
   if (name === "board") initBoard();
@@ -113,6 +114,21 @@ function handleRoute() {
 }
 
 /* ---- View-specific logic ---- */
+
+/**
+ * Initialize the "home" view.
+ * Disables loguin button if the user is already logged in.
+ */
+async function initHome() {
+  const loginBtn = document.getElementById("login-button");
+  if (!loginBtn) return;
+
+  const token = localStorage.getItem("token");
+
+  if (token) {
+    loginBtn.hidden = true;
+  }
+}
 
 /**
  * Initialize the "profile" view.
@@ -287,7 +303,7 @@ function initLogin() {
       form.reset();
 
       setTimeout(() => {
-        location.hash = "#/board";
+        location.hash = "#/dashboard";
       }, 400);
     } catch (err) {
       // Handles login API errors
@@ -322,6 +338,14 @@ function initLogin() {
  * Sets up the todo form, input, and list with create/remove/toggle logic.
  */
 function initBoard() {
+  /**
+   * Deletes the JWT token in the local storage and redirects user to home.
+   */
+  function handleLogout() {
+    localStorage.removeItem("token");
+    location.hash = "#/home";
+  }
+
   const form = document.getElementById("todoForm");
   const input = document.getElementById("newTodo");
   const list = document.getElementById("todoList");
