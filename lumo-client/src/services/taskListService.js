@@ -37,13 +37,8 @@ export async function createTask(
       description,
       status: mappedStatus,
       dueDate,
-<<<<<<< HEAD
       user,
       list,
-=======
-      user: userId,
-      list: activeListId,
->>>>>>> origin/main
     },
     {
       headers: {
@@ -97,11 +92,7 @@ export async function createList({ title }, token, userId) {
  * @throws {Error} If the API responds with an error status or message.
  */
 export async function getUserLists(token, userId) {
-<<<<<<< HEAD
   return http.get(`/api/v1/lists/${userId}`, {
-=======
-  return http.get(`/api/v1/lists?user=${encodeURIComponent(userId)}`, {
->>>>>>> origin/main
     headers: {
       Authorization: `Bearer ${token}`,
     },

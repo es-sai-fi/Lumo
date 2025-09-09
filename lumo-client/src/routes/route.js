@@ -153,25 +153,21 @@ async function initCreateTask() {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    // Captura de fecha y hora
     const date = form["task-date"].value;
     const time = form["task-time"].value;
 
-    // Construcción del objeto de tarea
     const data = {
       title: form["task-title"].value.trim(),
       description: form["task-desc"].value.trim(),
       status: form["task-status"].value,
-      dueDate: `${date}T${time}:00`,
+      dueDate: `${date}T${time}:00`, // Unifies date and time into ISO 8601 format
       list,
     };
 
     try {
       const token = localStorage.getItem("token");
       const userId = localStorage.getItem("userId");
-      if (!token) throw new Error("Usuario no autenticado.");
 
-      // Llamada al servicio
       const result = await createTask(data, token, userId);
       console.log("holaaa");
       console.log("Task creada:", result);
@@ -465,7 +461,8 @@ function initDashboard(listId = null) {
 
       // Auto-selecciona la lista por defecto "Tasks" o la primera disponible
       const preferred =
-        lists.find((l) => l.title === "Tasks") || (lists.length ? lists[0] : null);
+        lists.find((l) => l.title === "Tasks") ||
+        (lists.length ? lists[0] : null);
       if (preferred) {
         localStorage.setItem("activeListId", preferred._id);
         handleGetListTasks(preferred._id);
@@ -488,13 +485,7 @@ function initDashboard(listId = null) {
     const tasksGrid = document.querySelector(".tasks-grid");
 
     try {
-<<<<<<< HEAD
       const tasks = await getListTasks(listId, token);
-      console.log(tasks);
-=======
-      const response = await getListTasks(listId, token, userId);
-      const tasks = Array.isArray(response) ? response : response?.tasks || [];
->>>>>>> origin/main
 
       if (!tasksGrid) return;
       tasksGrid.innerHTML = "";
