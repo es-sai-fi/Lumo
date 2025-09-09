@@ -349,12 +349,10 @@ function initRegister() {
         location.hash = "#/login";
       }, 1000);
     } catch (err) {
-      // Trata con los errores de validacion
       msg.textContent = err.message || "Registration failed.";
       msg.style.color = "red";
       msg.hidden = false;
     } finally {
-      // Deshabilita el boton y no muestra el spinner
       formButton.disabled = false;
       spinner.style.display = "none";
     }
@@ -364,6 +362,7 @@ function initRegister() {
 function initLogin() {
   const form = document.getElementById("loginForm");
   const msg = document.getElementById("message");
+  const spinner = document.getElementById("spinner");
 
   if (!form) return;
 
@@ -419,6 +418,7 @@ function initLogin() {
       form.reset();
 
       setTimeout(() => {
+        spinner.style.display = "none";
         location.hash = "#/dashboard";
       }, 400);
     } catch (err) {
@@ -544,16 +544,13 @@ function initDashboard(listId = null) {
         const card = document.createElement("div");
         card.className = "task-card";
 
-        // Encabezado
         const header = document.createElement("div");
         header.className = "task-header";
 
         const h3 = document.createElement("h3");
 
-        // Circle con color según status
         const circle = document.createElement("span");
         circle.className = "circle";
-        // Mapear estados del backend a colores
         switch (task.status) {
           case "Unassigned":
             circle.classList.add("gray");
@@ -579,22 +576,18 @@ function initDashboard(listId = null) {
         const editBtn = document.createElement("button");
         editBtn.className = "edit-btn";
         editBtn.textContent = "✎";
-        // agregar listener si quieres editar
 
         const deleteBtn = document.createElement("button");
         deleteBtn.className = "delete-btn";
         deleteBtn.textContent = "🗑️";
-        // agregar listener si quieres eliminar
 
         actions.appendChild(editBtn);
         actions.appendChild(deleteBtn);
         header.appendChild(actions);
 
-        // Descripción
         const desc = document.createElement("p");
         desc.textContent = task.description || "";
 
-        // Footer con dueDate
         const footer = document.createElement("div");
         footer.className = "task-footer";
 
@@ -604,7 +597,6 @@ function initDashboard(listId = null) {
 
         footer.appendChild(due);
 
-        // Armar card
         card.appendChild(header);
         card.appendChild(desc);
         card.appendChild(footer);
