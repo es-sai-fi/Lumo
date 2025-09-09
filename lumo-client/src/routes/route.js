@@ -445,92 +445,12 @@ function initLogin() {
     }
 
     form.querySelector('button[type="submit"]').disabled = true;
-    handleLogin(data);
-  });
-}
-
-function initLogin() {
-  const form = document.getElementById("loginForm");
-  const msg = document.getElementById("message");
-
-  if (!form) return;
-
-  // Listens for the 'invalid' event to customize validation messages.
-  form.addEventListener(
-    "invalid",
-    (e) => {
-      const input = e.target;
-
-      switch (input.name) {
-        case "email":
-          if (input.validity.valueMissing) {
-            input.setCustomValidity("Email is a required field.");
-          } else if (input.validity.typeMismatch) {
-            input.setCustomValidity(
-              "Please enter a valid email address (e.g., user@domain.com).",
-            );
-          } else {
-            input.setCustomValidity(""); // Clears the custom error message if valid.
-          }
-          break;
-        case "password":
-          if (input.validity.valueMissing) {
-            input.setCustomValidity("Password is a required field.");
-          } else {
-            input.setCustomValidity("");
-          }
-          break;
-        default:
-          // Clears any other custom validation messages.
-          input.setCustomValidity("");
-          break;
-      }
-    },
-    true,
-  );
-
-  // Function that handles login and saves the token
-  async function handleLogin(data) {
-    const formButton = form.querySelector('button[type="submit"]');
     try {
-      const response = await loginUser(data); // loginUser from userService.js
-      const token = response.token; // assuming the backend returns { token }
-
-      localStorage.setItem("token", token);
-
-      msg.textContent = "You have successfully logged in! 🎉";
-      msg.style.color = "green";
-      msg.hidden = false;
-      form.reset();
-
-      setTimeout(() => {
-        location.hash = "#/board";
-      }, 400);
+      handleLogin(data);
+      location.hash = "#/dashboard";
     } catch (err) {
-      // Handles login API errors
-      msg.textContent = `Could not log in: ${err.message}`;
-      msg.hidden = false;
-    } finally {
-      formButton.disabled = false;
+      alert(err);
     }
-  }
-
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    msg.textContent = "";
-
-    const data = {
-      email: form.email.value.trim(),
-      password: form.password.value.trim(),
-    };
-
-    // Use checkValidity() to trigger native validation and 'invalid' events.
-    if (!form.checkValidity()) {
-      return;
-    }
-
-    form.querySelector('button[type="submit"]').disabled = true;
-    handleLogin(data);
   });
 }
 
