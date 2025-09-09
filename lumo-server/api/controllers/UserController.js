@@ -97,6 +97,19 @@ class UserController extends GlobalController {
           .json({ message: "Email or password are incorrect" });
       }
 
+      // Ensure the user has a default "Tasks" list (idempotent)
+      try {
+        const existingDefault = await List.findOne({ user: user._id, title: "Tasks" });
+        if (!existingDefault) {
+          await List.create({ title: "Tasks", user: user._id });
+        }
+      } catch (e) {
+        if (process.env.NODE_ENV === "development") {
+          console.warn("Could not ensure default Tasks list on login:", e.message);
+        }
+        // do not block login on this
+      }
+
       const payload = { id: user._id, email: user.email };
       const token = jwt.sign(payload, process.env.JWT_SECRET, {
         expiresIn: "1h",
