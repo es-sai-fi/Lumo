@@ -1,0 +1,320 @@
+/* Principal container */
+.content-wrapper {
+    display: flex;
+    height: 100vh;
+    
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+}
+
+
+/* Sidebar */
+aside {
+    background-color: #263238;
+    width: 220px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    padding-top: 9px;
+    overflow-y: auto;
+    
+}
+
+/* Menus */
+aside ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+aside li {
+    margin: 10px 0;
+}
+
+aside a {
+    color: #ffffff;
+    text-decoration: none;
+    display: block;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-variation-settings: 'wght' 500;
+    font-size: 1.3rem;
+
+}
+
+
+aside a:hover {
+    background-color: #5c6468;
+}
+
+aside hr {
+    border: none;
+    border-top: 1px solid #5c6468;
+    margin: 16px 0;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+
+}
+
+/* Main */
+main {
+    flex: 1;
+    margin-left: 220px;
+    background-color: #fffefe;
+    padding: 20px;
+    
+}
+/* ---------------------------------- */
+/* Responsive */
+@media (max-width: 768px) {
+    aside {
+        width: 150px; 
+        
+    }
+
+    main {
+        margin-left: 150px; /* adjusts to new width */
+    }
+
+    #static-ul li a {
+        font-size: 1rem;
+        padding: 10px 9px;
+        gap: 2px;
+        margin-left: -20px;
+    }
+
+    #static-ul li a::before {
+        width: 12px;
+        height: 12px;
+    }
+    .tasks-grid {
+        grid-template-columns: 1fr; /* one column */
+  }
+}
+
+
+/* Menu styles */
+#static-ul li a {
+    color: #fff;
+    font-size: 1.2rem;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 12px 24px;
+    position: relative;
+}
+
+/* Circle before each link */
+#static-ul li a::before {
+    content: "";
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* Colors for each section */
+#static-ul li:nth-child(2) a::before {
+    background-color: #f4ad14;
+    /* Ongoing */
+}
+
+#static-ul li:nth-child(3) a::before {
+    background-color: #767373;
+    /* Unassigned */
+}
+
+#static-ul li:nth-child(4) a::before {
+    background-color: #87cf23;
+    /* Completed */
+}
+
+#static-ul li:nth-child(5) a::before {
+    background-color: #1e88e5;
+    
+    /* All */
+}
+/* ---------------------------------- */
+/* Welcome user block */
+.user-info {
+    text-align: center;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 100px;
+    background-color: #5a5a5a;
+    
+}
+
+/* User info */
+.user-info .welcome {
+    
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #ffffff;
+    
+}
+
+/* User sync time */
+.sync-time  {
+
+    margin-left: 30px;
+    font-size: 0.8rem;
+    color: #dcdcdc;
+
+}
+
+.sync-date {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #dcdcdc;
+
+}
+/* ---------------------------------- */
+
+/* === Tasks === */
+.tasks-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  background-color: #b9b4b4;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-radius: 10px;
+}
+
+.tasks-header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.circle {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  display: inline-block;
+  background: transparent;
+  border: 3px solid;
+  margin-right: 10px;
+}
+.circle.blue { border-color: #1e88e5; }
+.circle.yellow { border-color: #f4ad14; }
+.circle.green { border-color: #87cf23; }
+.circle.gray { border-color: #726a6a; }
+
+/* Button + */
+.add-task-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  color: rgb(0, 0, 0);
+  font-size: 1.5rem;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  
+}
+
+/* Cards */
+.task-card {
+  background: #d9d9d9;
+  border-radius: 1rem;
+  padding: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  align-content: center;
+}
+
+.task-header h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.task-actions button {
+  background: none;
+  border: none;
+  
+  margin-left: 8px;
+  font-size: 1rem;
+}
+
+.task-footer {
+  font-size: 0.9rem;
+  color: #555;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Modal styles for create-task */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    margin-left: 5rem;
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-window {
+    background: #7b8c94;
+    border-radius: 16px;
+    padding: 2rem 1.5rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+    min-width: 320px;
+    max-width: 90vw;
+    position: relative;
+    justify-items: center;
+
+}
+
+.previous-btn {
+    color: #000000;
+    
+    position: absolute;
+    left: 16px;
+    top: 18px;
+    right: 16px;
+    border: none;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 700;
+
+    display: flex;
+    align-items: center;
+
+}
