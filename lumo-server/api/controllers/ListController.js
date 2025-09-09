@@ -69,6 +69,7 @@ class ListController extends GlobalController {
       return res.status(400).json({ message: "User is required." });
     }
     try {
+      console.log(user);
       const lists = await ListDAO.getAll({ user });
       res.status(200).json(lists);
     } catch (error) {
