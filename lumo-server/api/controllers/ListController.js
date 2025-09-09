@@ -1,5 +1,5 @@
 const GlobalController = require("./GlobalController");
-const List = require("../models/List");
+const ListDAO = require("../dao/ListDAO");
 
 /**
  * Controller class for managing List resources.
