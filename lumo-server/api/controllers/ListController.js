@@ -2,8 +2,25 @@ const GlobalController = require("./GlobalController");
 const ListDAO = require("../dao/ListDAO");
 const TaskDAO = require("../dao/TaskDAO");
 
+/**
+ * Controller class for managing List resources.
+ * @extends GlobalController
+ */
 class ListController extends GlobalController {
-  // Create a new list
+  /**
+   * Create a new list for a user.
+   *
+   * @async
+   * @function create
+   * @param {import("express").Request} req - Express request object.
+   * @param {import("express").Response} res - Express response object.
+   * @body {string} title - The title of the list.
+   * @body {string} user - The ID of the user who owns the list.
+   * @returns {Promise<void>} Sends JSON response with the created list or an error message.
+   * @throws {400} If title or user is missing.
+   * @throws {409} If a list with the same title already exists for the user.
+   * @throws {500} If an internal server error occurs.
+   */
   async create(req, res) {
     const { title, user } = req.body;
 
@@ -33,6 +50,18 @@ class ListController extends GlobalController {
     }
   }
 
+  /**
+   * Retrieve all lists for a specific user.
+   *
+   * @async
+   * @function getUserLists
+   * @param {import("express").Request} req - Express request object.
+   * @param {import("express").Response} res - Express response object.
+   * @param {string} req.params.userId - The ID of the user whose lists are requested.
+   * @returns {Promise<void>} Sends JSON response with an array of lists or an error message.
+   * @throws {400} If userId is missing.
+   * @throws {500} If an internal server error occurs.
+   */
   async getUserLists(req, res) {
     const user = req.params.userId;
 
@@ -40,10 +69,7 @@ class ListController extends GlobalController {
       return res.status(400).json({ message: "User is required." });
     }
     try {
-      console.log(user);
       const lists = await ListDAO.getAll({ user });
-      console.log(lists);
-
       res.status(200).json(lists);
     } catch (error) {
       console.error("Error getting lists:", error);
@@ -53,6 +79,18 @@ class ListController extends GlobalController {
     }
   }
 
+  /**
+   * Retrieve all tasks for a specific list.
+   *
+   * @async
+   * @function getListTasks
+   * @param {import("express").Request} req - Express request object.
+   * @param {import("express").Response} res - Express response object.
+   * @param {string} req.params.listId - The ID of the list whose tasks are requested.
+   * @returns {Promise<void>} Sends JSON response with an array of tasks or an error message.
+   * @throws {400} If listId is missing.
+   * @throws {500} If an internal server error occurs.
+   */
   async getListTasks(req, res) {
     const listId = req.params.listId;
 
@@ -72,4 +110,7 @@ class ListController extends GlobalController {
   }
 }
 
+/**
+ * Export a singleton instance of ListController.
+ */
 module.exports = new ListController();

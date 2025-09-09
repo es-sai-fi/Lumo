@@ -7,12 +7,31 @@ const { sendMail } = require("../utils/mailer");
 
 /**
  * Controller class for managing User resources.
+ * @extends GlobalController
  */
 class UserController extends GlobalController {
   constructor() {
     super(UserDAO);
   }
 
+  /**
+   * Create a new user and a default list.
+   *
+   * @async
+   * @function create
+   * @param {import("express").Request} req - Express request object.
+   * @param {import("express").Response} res - Express response object.
+   * @body {string} firstName - First name of the user (required).
+   * @body {string} lastName - Last name of the user (required).
+   * @body {number|string} age - Age of the user (required).
+   * @body {string} email - Email of the user (required).
+   * @body {string} password - Password (required).
+   * @body {string} confirmPassword - Password confirmation (required).
+   * @returns {Promise<void>} Sends JSON response with user ID or an error message.
+   * @throws {400} If any required field is missing or passwords don't match.
+   * @throws {409} If email is already registered.
+   * @throws {500} If internal server error occurs.
+   */
   async create(req, res) {
     let { firstName, lastName, age, email, password, confirmPassword } =
       req.body;
@@ -68,6 +87,20 @@ class UserController extends GlobalController {
     }
   }
 
+  /**
+   * Login a user and return a JWT token.
+   *
+   * @async
+   * @function login
+   * @param {import("express").Request} req - Express request object.
+   * @param {import("express").Response} res - Express response object.
+   * @body {string} email - Email of the user (required).
+   * @body {string} password - Password of the user (required).
+   * @returns {Promise<void>} Sends JSON response with JWT token and user ID or error message.
+   * @throws {400} If email or password is missing.
+   * @throws {401} If credentials are invalid.
+   * @throws {500} If internal server error occurs.
+   */
   async login(req, res) {
     const { email, password } = req.body;
 
@@ -128,6 +161,20 @@ class UserController extends GlobalController {
         .json({ message: "Internal server error, try again later" });
     }
   }
+
+  /**
+   * Initiate a password reset by sending an email with a reset link.
+   *
+   * @async
+   * @function forgotPassword
+   * @param {import("express").Request} req - Express request object.
+   * @param {import("express").Response} res - Express response object.
+   * @body {string} email - Email of the user requesting password reset (required).
+   * @returns {Promise<void>} Sends JSON response confirming the reset email sent or an error.
+   * @throws {400} If email is missing.
+   * @throws {404} If no account exists with that email.
+   * @throws {500} If internal server error occurs.
+   */
   async forgotPassword(req, res) {
     const { email } = req.body;
 
@@ -180,6 +227,20 @@ class UserController extends GlobalController {
     }
   }
 
+  /**
+   * Reset a user's password using a valid token.
+   *
+   * @async
+   * @function resetPassword
+   * @param {import("express").Request} req - Express request object.
+   * @param {import("express").Response} res - Express response object.
+   * @param {string} req.params.token - Token sent by email for password reset.
+   * @body {string} newPassword - New password (required).
+   * @body {string} confirmPassword - Confirm new password (required).
+   * @returns {Promise<void>} Sends JSON response confirming password reset or an error message.
+   * @throws {400} If fields are missing, passwords don't match, or token is invalid/expired.
+   * @throws {500} If internal server error occurs.
+   */
   async resetPassword(req, res) {
     const { token } = req.params;
     const { newPassword, confirmPassword } = req.body;
