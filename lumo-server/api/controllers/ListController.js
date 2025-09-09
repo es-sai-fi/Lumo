@@ -15,6 +15,7 @@ class ListController extends GlobalController {
 
     try {
       const exists = await ListDAO.findOne({ title, user });
+
       if (exists) {
         return res.status(409).json({
           message: "List name already exists for this user.",
@@ -22,6 +23,7 @@ class ListController extends GlobalController {
       }
 
       const list = await ListDAO.create({ title, user });
+
       res.status(201).json(list);
     } catch (error) {
       console.error("Error creating list:", error);

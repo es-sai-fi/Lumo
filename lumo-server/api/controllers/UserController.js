@@ -1,6 +1,6 @@
 const GlobalController = require("./GlobalController");
 const UserDAO = require("../dao/UserDAO");
-const ListController = require("./ListController");
+const ListDAO = require("../dao/ListDAO");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { sendMail } = require("../utils/mailer");
@@ -41,9 +41,6 @@ class UserController extends GlobalController {
 
       const existingUser = await this.dao.findOne({ email });
       if (existingUser) {
-        console.log(
-          `Registration rejected 409 Conflict: email already registered (${email})`,
-        );
         return res.status(409).json({ message: "Email already registered" });
       }
 
@@ -55,7 +52,7 @@ class UserController extends GlobalController {
         password: hashedPassword,
       });
 
-      const listDefault = await ListController.dao.create({
+      const listDefault = await ListDAO.create({
         title: "Tasks",
         user: user._id,
       });
@@ -99,7 +96,7 @@ class UserController extends GlobalController {
 
       // Ensure the user has a default "Tasks" list (idempotent)
       try {
-        const existingDefault = await ListController.dao.findOne({
+        const existingDefault = await ListDAO.findOne({
           user: user._id,
           title: "Tasks",
         });
