@@ -1,13 +1,8 @@
 const GlobalController = require("./GlobalController");
-const List = require("../models/List");
 const ListDAO = require("../dao/ListDAO");
 const TaskDAO = require("../dao/TaskDAO");
 
 class ListController extends GlobalController {
-  constructor() {
-    super(ListDAO);
-  }
-
   // Create a new list
   async create(req, res) {
     const { title, user } = req.body;
@@ -19,14 +14,14 @@ class ListController extends GlobalController {
     }
 
     try {
-      const exists = await List.findOne({ title, user });
+      const exists = await ListDAO.findOne({ title, user });
       if (exists) {
         return res.status(409).json({
           message: "List name already exists for this user.",
         });
       }
 
-      const list = await List.create({ title, user });
+      const list = await ListDAO.create({ title, user });
       res.status(201).json(list);
     } catch (error) {
       console.error("Error creating list:", error);
@@ -36,14 +31,16 @@ class ListController extends GlobalController {
     }
   }
 
-  async getAll(req, res) {
+  async getUserLists(req, res) {
     const user = req.params.userId;
 
     if (!user) {
       return res.status(400).json({ message: "User is required." });
     }
     try {
+      console.log(user);
       const lists = await ListDAO.getAll({ user });
+      console.log(lists);
 
       res.status(200).json(lists);
     } catch (error) {

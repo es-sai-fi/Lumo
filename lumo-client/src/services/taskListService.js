@@ -22,20 +22,12 @@ export async function createTask(
   token,
   user,
 ) {
-  // Map client statuses to server enum values
-  const statusMap = {
-    unassigned: "Unassigned",
-    ongoing: "On going",
-    completed: "Done",
-  };
-  const mappedStatus = statusMap[status] || undefined; // let backend default if undefined
-
   return http.post(
     "/api/v1/tasks",
     {
       title,
       description,
-      status: mappedStatus,
+      status,
       dueDate,
       user,
       list,
@@ -119,15 +111,4 @@ export async function getListTasks(listId, token) {
       Authorization: `Bearer ${token}`,
     },
   });
-}
-
-export async function loginUser({ email, password }) {
-  return http.post("/api/v1/users/login", {
-    email,
-    password,
-  });
-}
-
-export async function getUserProfileInfo({ email }) {
-  return http.get("/api/v1/users/profile?email=" + encodeURIComponent(email));
 }

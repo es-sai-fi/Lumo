@@ -144,6 +144,13 @@ async function initHome() {
   }
 }
 
+/* ---- View-specific logic ---- */
+
+/**
+ * Initialize the "create-task" view.
+ * Retrieves the user input and sends a petition to the backend
+ * to create the task.
+ */
 async function initCreateTask() {
   const list = localStorage.getItem("activeListId");
   const form = document.getElementById("taskForm");
@@ -169,11 +176,8 @@ async function initCreateTask() {
       const userId = localStorage.getItem("userId");
 
       const result = await createTask(data, token, userId);
-      console.log("holaaa");
-      console.log("Task creada:", result);
-      alert("Tarea creada exitosamente 🎉");
-      form.reset(); // limpiar campos después de enviar
-      // Regresar al dashboard y refrescará automáticamente
+      form.reset();
+      alert("Task created Successfully 🎉");
       location.hash = "#/dashboard";
     } catch (err) {
       console.error("Error creando tarea:", err.message);
@@ -450,9 +454,10 @@ function initDashboard(listId = null) {
         const li = document.createElement("li");
 
         li.textContent = list.title;
-        li.style.cursor = "pointer"; // que parezca clickable
+
         li.addEventListener("click", () => {
           localStorage.setItem("activeListId", list._id);
+          li.style.cursor = "pointer";
           handleGetListTasks(list._id);
         });
 
