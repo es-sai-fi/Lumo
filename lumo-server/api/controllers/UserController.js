@@ -54,6 +54,12 @@ class UserController extends GlobalController {
         password: hashedPassword,
       });
 
+      const listDefault = await List.create({
+        title: "Tasks",
+        user: user._id,
+        isDefault: true
+      });
+
       res.status(201).json({ id: user._id });
     } catch (error) {
       if (process.env.NODE_ENV === "development") {
