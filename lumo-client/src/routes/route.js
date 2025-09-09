@@ -151,31 +151,36 @@ function initRegister() {
   if (!form) return;
 
   // Agarra el evento invalid para cambiar el mensaje de html y hacer uno propio
-  form.addEventListener("invalid", (e) => {
-    const input = e.target;
-    // Password validation logic.
-    if (input.name === "password") {
-      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
-      if (!passwordRegex.test(input.value)) {
-        input.setCustomValidity(
-          "The password must be at least 8 characters and include an uppercase letter, lowercase letter, number and a special character."
-        );
-      } else {
-        input.setCustomValidity("");
+  form.addEventListener(
+    "invalid",
+    (e) => {
+      const input = e.target;
+      // Password validation logic.
+      if (input.name === "password") {
+        const passwordRegex =
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+        if (!passwordRegex.test(input.value)) {
+          input.setCustomValidity(
+            "The password must be at least 8 characters and include an uppercase letter, lowercase letter, number and a special character.",
+          );
+        } else {
+          input.setCustomValidity("");
+        }
       }
-    }
-    // logica del email
-    if (input.name === "email") {
+      // logica del email
+      if (input.name === "email") {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (!emailRegex.test(input.value)) {
-            input.setCustomValidity(
-                "Please enter a valid email address (e.g., user@domain.com)."
-            );
+          input.setCustomValidity(
+            "Please enter a valid email address (e.g., user@domain.com).",
+          );
         } else {
-            input.setCustomValidity("");
+          input.setCustomValidity("");
         }
-    }
-  }, true);
+      }
+    },
+    true,
+  );
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -194,7 +199,7 @@ function initRegister() {
     const formButton = form.querySelector('button[type="submit"]');
 
     try {
-      // 
+      //
       if (data.password !== data.confirmPassword) {
         throw new Error("Passwords do not match.");
       }
@@ -228,82 +233,88 @@ function initRegister() {
 }
 
 function initLogin() {
-    const form = document.getElementById("loginForm");
-    const msg = document.getElementById("message");
+  const form = document.getElementById("loginForm");
+  const msg = document.getElementById("message");
 
-    if (!form) return;
+  if (!form) return;
 
-    // Listens for the 'invalid' event to customize validation messages.
-    form.addEventListener("invalid", (e) => {
-        const input = e.target;
+  // Listens for the 'invalid' event to customize validation messages.
+  form.addEventListener(
+    "invalid",
+    (e) => {
+      const input = e.target;
 
-        switch (input.name) {
-            case "email":
-                if (input.validity.valueMissing) {
-                    input.setCustomValidity("Email is a required field.");
-                } else if (input.validity.typeMismatch) {
-                    input.setCustomValidity("Please enter a valid email address (e.g., user@domain.com).");
-                } else {
-                    input.setCustomValidity(""); // Clears the custom error message if valid.
-                }
-                break;
-            case "password":
-                if (input.validity.valueMissing) {
-                    input.setCustomValidity("Password is a required field.");
-                } else {
-                    input.setCustomValidity("");
-                }
-                break;
-            default:
-                // Clears any other custom validation messages.
-                input.setCustomValidity("");
-                break;
-        }
-    }, true);
+      switch (input.name) {
+        case "email":
+          if (input.validity.valueMissing) {
+            input.setCustomValidity("Email is a required field.");
+          } else if (input.validity.typeMismatch) {
+            input.setCustomValidity(
+              "Please enter a valid email address (e.g., user@domain.com).",
+            );
+          } else {
+            input.setCustomValidity(""); // Clears the custom error message if valid.
+          }
+          break;
+        case "password":
+          if (input.validity.valueMissing) {
+            input.setCustomValidity("Password is a required field.");
+          } else {
+            input.setCustomValidity("");
+          }
+          break;
+        default:
+          // Clears any other custom validation messages.
+          input.setCustomValidity("");
+          break;
+      }
+    },
+    true,
+  );
 
-    // Function that handles login and saves the token
-    async function handleLogin(data) {
-        const formButton = form.querySelector('button[type="submit"]');
-        try {
-            const response = await loginUser(data); // loginUser from userService.js
-            const token = response.token; // assuming the backend returns { token }
+  // Function that handles login and saves the token
+  async function handleLogin(data) {
+    const formButton = form.querySelector('button[type="submit"]');
+    try {
+      const response = await loginUser(data); // loginUser from userService.js
+      const token = response.token; // assuming the backend returns { token }
 
-            localStorage.setItem("token", token);
+      localStorage.setItem("token", token);
 
-            msg.textContent = "You have successfully logged in! 🎉";
-            msg.style.color = "green";
-            msg.hidden = false;
-            form.reset();
+      msg.textContent = "You have successfully logged in! 🎉";
+      msg.style.color = "green";
+      msg.hidden = false;
+      form.reset();
 
-            setTimeout(() => {
-                location.hash = "#/board";
-            }, 400);
-        } catch (err) {
-            // Handles login API errors
-            msg.textContent = `Could not log in: ${err.message}`;
-            msg.hidden = false;
-        } finally {
-            formButton.disabled = false;
-        }
+      setTimeout(() => {
+        location.hash = "#/board";
+      }, 400);
+    } catch (err) {
+      // Handles login API errors
+      msg.textContent = `Could not log in: ${err.message}`;
+      msg.hidden = false;
+    } finally {
+      formButton.disabled = false;
+    }
+  }
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    msg.textContent = "";
+
+    const data = {
+      email: form.email.value.trim(),
+      password: form.password.value.trim(),
+    };
+
+    // Use checkValidity() to trigger native validation and 'invalid' events.
+    if (!form.checkValidity()) {
+      return;
     }
 
-    form.addEventListener("submit", (e) => {
-        e.preventDefault();
-        msg.textContent = "";
-
-        const data = {
-            email: form.email.value.trim(),
-            password: form.password.value.trim(),
-        };
-
-        // Use checkValidity() to trigger native validation and 'invalid' events.
-        if (!form.checkValidity()) {
-            return;
-        }
-
-        form.querySelector('button[type="submit"]').disabled = true;
-        handleLogin(data);
-    });
+    form.querySelector('button[type="submit"]').disabled = true;
+    handleLogin(data);
+  });
 }
 
 /**
