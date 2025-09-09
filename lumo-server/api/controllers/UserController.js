@@ -1,5 +1,6 @@
 const GlobalController = require("./GlobalController");
 const UserDAO = require("../dao/UserDAO");
+const ListController = require("./ListController");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
@@ -53,10 +54,9 @@ class UserController extends GlobalController {
         password: hashedPassword,
       });
 
-      const listDefault = await List.create({
+      const listDefault = await ListController.dao.create({
         title: "Tasks",
         user: user._id,
-        isDefault: true
       });
 
       res.status(201).json({ id: user._id });

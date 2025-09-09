@@ -7,6 +7,7 @@ import {
   createTask,
   createList,
   getUserLists,
+  getListTasks,
 } from "../services/taskListService.js";
 
 const app = document.getElementById("app");
@@ -68,7 +69,8 @@ async function loadView(name) {
   if (name === "home") initHome();
   if (name === "register") initRegister();
   if (name === "login") initLogin();
-  if (name === "Dashboard") initDashboard();
+  if (name === "dashboard") initDashboard();
+  if (name === "create-task") initCreateTask();
   // if (name === "profile") initProfile();
 }
 
@@ -106,14 +108,6 @@ function handleRoute() {
   const path =
     (location.hash.startsWith("#/") ? location.hash.slice(2) : "") || "home";
 
-  // Para rutas dinámicas tipo list/:id
-  const listMatch = path.match(/^list\/(.+)$/);
-  if (listMatch) {
-    const listId = listMatch[1]; // capturamos el id
-    loadView("board").then(() => initBoard(listId));
-    return;
-  }
-
   const known = [
     "home",
     "login",
@@ -123,7 +117,7 @@ function handleRoute() {
     "ongoing",
     "unassigned",
     "completed",
-    "board",
+    "dashboard",
     "create-task",
     "create-list",
   ];
@@ -151,7 +145,7 @@ async function initHome() {
 }
 
 async function initCreateTask() {
-  localStorage.getItem("activeListId", activeListId);
+  const list = localStorage.getItem("activeListId");
   const form = document.getElementById("taskForm");
   if (!form) return;
 
@@ -168,7 +162,7 @@ async function initCreateTask() {
       description: form["task-desc"].value.trim(),
       status: form["task-status"].value,
       dueDate: `${date}T${time}:00`,
-      activeListId,
+      list,
     };
 
     try {
@@ -178,7 +172,7 @@ async function initCreateTask() {
 
       // Llamada al servicio
       const result = await createTask(data, token, userId);
-
+      console.log("holaaa");
       console.log("Task creada:", result);
       alert("Tarea creada exitosamente 🎉");
       form.reset(); // limpiar campos después de enviar
@@ -450,7 +444,7 @@ function initDashboard(listId = null) {
 
     try {
       const response = await getUserLists(token, userId);
-      const lists = response.lists; // depende si usas axios o fetch, ajusta
+      const lists = response; // depende si usas axios o fetch, ajusta
 
       dynamicUl.innerHTML = ""; // limpiamos antes de agregar
 
@@ -484,8 +478,8 @@ function initDashboard(listId = null) {
     const tasksGrid = document.getElementById("tasks-grid");
 
     try {
-      const response = await getListTasks(listId, token, userId);
-      const tasks = response.taks;
+      const tasks = await getListTasks(listId, token);
+      console.log(tasks);
 
       tasksGrid.innerHTML = "";
 

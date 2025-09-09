@@ -18,9 +18,9 @@ import { http } from "../api/http.js";
  * @throws {Error} If the API responds with an error status or message.
  */
 export async function createTask(
-  { title, description, status, dueDate, activeListId },
+  { title, description, status, dueDate, list },
   token,
-  userId,
+  user,
 ) {
   return http.post(
     "/api/v1/tasks",
@@ -29,8 +29,8 @@ export async function createTask(
       description,
       status,
       dueDate,
-      userId,
-      activeListId,
+      user,
+      list,
     },
     {
       headers: {
@@ -84,17 +84,11 @@ export async function createList({ title }, token, userId) {
  * @throws {Error} If the API responds with an error status or message.
  */
 export async function getUserLists(token, userId) {
-  return http.get(
-    "/api/v1/lists",
-    {
-      userId,
+  return http.get(`/api/v1/lists/${userId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
     },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    },
-  );
+  });
 }
 
 /**
@@ -111,19 +105,12 @@ export async function getUserLists(token, userId) {
  * @returns {Promise<Object>} The created task object returned by the API.
  * @throws {Error} If the API responds with an error status or message.
  */
-export async function getListTasks(listId, token, userId) {
-  return http.get(
-    "/api/v1/lists",
-    {
-      listId,
-      userId,
+export async function getListTasks(listId, token) {
+  return http.get(`/api/v1/lists/list_tasks/${listId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
     },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    },
-  );
+  });
 }
 
 export async function loginUser({ email, password }) {
